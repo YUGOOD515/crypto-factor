@@ -195,19 +195,11 @@
 .factor-map {
   width: 100%;
   height: auto;
-  max-height: calc(100% - 45px); /* gap + foot row */
+  max-height: calc(100% - 24px);
   overflow: visible;
 }
 
-/* progress line, with the fingerprint pause button at its end */
-.scrolly__foot {
-  display: flex;
-  align-items: center;
-  gap: var(--s-4);
-}
-
 .scrolly__progress {
-  flex: 1;
   height: 2px;
   background: var(--rule);
 }
@@ -322,9 +314,7 @@
     background: var(--paper);
     pointer-events: auto;
   }
-  .factor-map { max-height: calc(100% - 37px); }
-  .scrolly__foot { gap: var(--s-3); }
-  .scrolly__foot .fp-motion { width: 25px; height: 25px; font-size: 11px; }
+  .factor-map { max-height: calc(100% - 18px); }
   .scrolly__steps {
     grid-column: 1 / -1;
     position: relative;
@@ -1204,13 +1194,6 @@ html:not(.js) .nav-chart {
   pointer-events: none;
 }
 
-.paper-map__motion {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-}
-
 .pm-node { cursor: pointer; outline: none; }
 .pm-node rect { fill: var(--dark); stroke: var(--on-dark); stroke-width: 1.5; transition: fill var(--dur-1) var(--ease-out); }
 .pm-node .pm-year { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; fill: var(--on-dark-2); font-variant-numeric: tabular-nums; }
@@ -1407,18 +1390,8 @@ html:not(.js) .nav-chart {
   grid-column: 7 / span 6;
 }
 
-.dl-table-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-4);
+.dl-grid__table > .label {
   margin-bottom: var(--s-4);
-}
-
-/* the pause button overhangs the label line so the table stays level with
-   the package card */
-.dl-table-head .fp-motion {
-  margin-block: -6px;
 }
 
 .dl-hero {

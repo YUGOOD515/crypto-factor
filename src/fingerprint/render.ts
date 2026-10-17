@@ -6,13 +6,14 @@
  * stops and pointer handling of the large canvas are kept line for line, so it
  * moves exactly like the original. Changes: TypeScript types,
  * `canvas[data-factor]` instead of `canvas[data-coin]`, visualParameters() from
- * ./data.ts, and the frame timing and pause switch now live in ./clock.ts so
- * that every fingerprint on the page shares one clock. The original's small
- * canvas variant is replaced by the marks in ./mark.ts; the NFT SVG edition
- * and the WebGL sculpture are not part of this port.
+ * ./data.ts, the frame timing and pause switch live in ./clock.ts (shared by
+ * the fingerprints of all factor panels), and the draw loop runs only while a
+ * fingerprint is in view. The original's small canvas variant is replaced by
+ * the still marks in ./mark.ts; the NFT SVG edition and the WebGL sculpture
+ * are not part of this port.
  */
 import type { Factor } from '../lib/data';
-import { onFrame } from './clock';
+import { onFrame, type Frame } from './clock';
 import { visualParameters, type VisualParams } from './data';
 
 export { isMotionPaused, setMotionPaused } from './clock';
@@ -129,11 +130,13 @@ export function mountFingerprints(container: ParentNode, factorList: readonly Fa
       const factor = factorList.find((f) => f.code === canvas.dataset.factor),
         ctx = canvas.getContext('2d');
       if (!factor || !ctx) return [];
-      return [{ canvas, ctx, p: visualParameters(factor, factorList), visible: true, mouse: { x: 0, y: 0 } }];
+      return [{ canvas, ctx, p: visualParameters(factor, factorList), visible: false, mouse: { x: 0, y: 0 } }];
     },
   );
   let drawn = false;
   const points = new Float64Array(3 * (STEPS + 1));
+  // The draw loop runs only while a fingerprint is in view.
+  let stop: (() => void) | null = null;
   const observer = new IntersectionObserver((entries) => {
     for (const e of entries) {
       const item = items.find((i) => i.canvas === e.target);
@@ -141,6 +144,12 @@ export function mountFingerprints(container: ParentNode, factorList: readonly Fa
         item.visible = e.isIntersecting;
         drawn = false;
       }
+    }
+    const inView = items.some((i) => i.visible);
+    if (inView && !stop) stop = onFrame(draw);
+    else if (!inView && stop) {
+      stop();
+      stop = null;
     }
   });
   const cleanups: (() => void)[] = [];
@@ -161,7 +170,7 @@ export function mountFingerprints(container: ParentNode, factorList: readonly Fa
       item.canvas.removeEventListener('pointerleave', reset);
     });
   }
-  const stop = onFrame(({ time, beat, still }) => {
+  function draw({ time, beat, still }: Frame) {
     if (!beat || (still && drawn)) return;
     for (const item of items) {
       if (!item.visible) continue;
@@ -198,13 +207,13 @@ export function mountFingerprints(container: ParentNode, factorList: readonly Fa
       }
     }
     drawn = true;
-  });
+  }
   const onResize = () => {
     drawn = false;
   };
   window.addEventListener('resize', onResize);
   return () => {
-    stop();
+    stop?.();
     observer.disconnect();
     cleanups.forEach((f) => f());
     window.removeEventListener('resize', onResize);

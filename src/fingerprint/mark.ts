@@ -11,12 +11,14 @@
  *   lines  as many bands as fit about 3 px apart, at full opacity: keeps the
  *          contour texture legible at any size.
  *
- * Surface, colours and clock are those of the large fingerprint (./render.ts,
- * ./clock.ts), so a mark is the same fingerprint with fewer lines and moves in
- * step with every other copy of its factor.
+ * Marks are stills: the first frame of the large fingerprint (time 0, pointer
+ * centred), where the one in the factor panel starts and where it stays under
+ * reduced motion. Surface and colours are those of the large fingerprint
+ * (./render.ts), so a mark is the same fingerprint with fewer lines. The bands
+ * of a mark are computed once per factor and level of detail and kept as
+ * paths, so a redraw (resize, map transition, hover) only strokes them.
  */
 import type { Factor } from '../lib/data';
-import { onFrame } from './clock';
 import { clamp, visualParameters, type VisualParams } from './data';
 import { contourInto } from './render';
 
@@ -26,13 +28,6 @@ export const MARK_SCALE = 0.37;
 const SPAN = 2.24;
 const BODY = { pitch: 1.1, alpha: 0.3, width: 1.05, min: 12, max: 72 };
 const LINES = { pitch: 3, min: 3, max: 40 };
-/**
- * Marks redraw on every fourth beat (200 ms). Scaled down to an icon the
- * surface moves slowly: the lines of a 44 px mark travel about a third of a
- * pixel a second (one at most), so a redraw shifts them by a tenth of a pixel
- * or so and more frequent ones would not show.
- */
-const MARK_BEATS = 4;
 
 export interface MarkDetail {
   radius: number;
@@ -58,8 +53,8 @@ export function markDetail(box: number): MarkDetail {
   };
 }
 
-// Gradients are built in the mark's unit space (centre 0, radius 1), so one
-// set per factor and band count serves every size and position on a canvas.
+// Gradients and paths are built in the mark's unit space (centre 0, radius 1),
+// so one set per factor and band count serves every size and position.
 type GradientCache = WeakMap<VisualParams, Map<number, CanvasGradient[]>>;
 const gradients = new WeakMap<CanvasRenderingContext2D, GradientCache>();
 function gradientsFor(ctx: CanvasRenderingContext2D, p: VisualParams, bands: number): CanvasGradient[] {
@@ -85,27 +80,43 @@ function gradientsFor(ctx: CanvasRenderingContext2D, p: VisualParams, bands: num
   return list;
 }
 
-let scratch = new Float64Array(3 * 113);
+/** Bands 1 … bands − 1 of the still surface, `steps` segments each. */
+const paths = new WeakMap<VisualParams, Map<string, Path2D[]>>();
+function bandPaths(p: VisualParams, bands: number, steps: number): Path2D[] {
+  let byCount = paths.get(p);
+  if (!byCount) paths.set(p, (byCount = new Map()));
+  const key = `${bands}:${steps}`;
+  let list = byCount.get(key);
+  if (!list) {
+    const points = new Float64Array(3 * (steps + 1));
+    list = [];
+    for (let i = 1; i < bands; i++) {
+      contourInto(points, p, i / bands, 0, steps);
+      const path = new Path2D();
+      path.moveTo(points[0], points[1]);
+      for (let j = 1; j <= steps; j++) path.lineTo(points[j * 3], points[j * 3 + 1]);
+      list.push(path);
+    }
+    byCount.set(key, list);
+  }
+  return list;
+}
+
 function strokeBands(
   ctx: CanvasRenderingContext2D,
   p: VisualParams,
   bands: number,
   steps: number,
-  time: number,
   alpha: number,
   width: number,
 ) {
-  if (scratch.length < 3 * (steps + 1)) scratch = new Float64Array(3 * (steps + 1));
-  const strokes = gradientsFor(ctx, p, bands);
+  const strokes = gradientsFor(ctx, p, bands),
+    list = bandPaths(p, bands, steps);
   ctx.globalAlpha = alpha;
   ctx.lineWidth = width;
   for (let i = 1; i < bands; i++) {
-    contourInto(scratch, p, i / bands, time, steps);
     ctx.strokeStyle = strokes[i];
-    ctx.beginPath();
-    ctx.moveTo(scratch[0], scratch[1]);
-    for (let j = 1; j <= steps; j++) ctx.lineTo(scratch[j * 3], scratch[j * 3 + 1]);
-    ctx.stroke();
+    ctx.stroke(list[i - 1]);
   }
 }
 
@@ -113,9 +124,9 @@ export interface MarkOptions {
   /** Opacity of the whole mark. */
   alpha?: number;
   /**
-   * Box size that sets the band counts, when it differs from the drawn size:
-   * a mark that is growing or shrinking keeps the counts of its target size
-   * instead of stepping through every count on the way.
+   * Box size that sets the level of detail, when it differs from the drawn
+   * size: a mark that is growing or shrinking keeps the bands of its target
+   * size instead of stepping through every count on the way.
    */
   detail?: number;
 }
@@ -127,19 +138,17 @@ export function drawMark(
   cx: number,
   cy: number,
   box: number,
-  time: number,
   { alpha = 1, detail = box }: MarkOptions = {},
 ): void {
   if (!(box > 0) || !(alpha > 0)) return;
-  const d = markDetail(box),
-    lod = detail === box ? d : markDetail(detail);
-  const t = time * (0.3 + p.activity * 0.5);
-  const lineWidth = clamp(((SPAN * d.radius) / lod.bands) * 0.4, 1, 1.4);
+  const radius = box * MARK_SCALE,
+    lod = markDetail(detail);
+  const lineWidth = clamp(((SPAN * radius) / lod.bands) * 0.4, 1, 1.4);
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.scale(d.radius, d.radius);
-  strokeBands(ctx, p, lod.bodyBands, d.bodySteps, t, BODY.alpha * alpha, BODY.width / d.radius);
-  strokeBands(ctx, p, lod.bands, d.steps, t, alpha, lineWidth / d.radius);
+  ctx.scale(radius, radius);
+  strokeBands(ctx, p, lod.bodyBands, lod.bodySteps, BODY.alpha * alpha, BODY.width / radius);
+  strokeBands(ctx, p, lod.bands, lod.steps, alpha, lineWidth / radius);
   ctx.restore();
 }
 
@@ -154,49 +163,51 @@ function fit(canvas: HTMLCanvasElement, width: number, height: number, dpr: numb
 }
 
 /**
- * Animate every `canvas[data-mark]` inside `root` (one mark per canvas, sized
- * by CSS). Returns a cleanup function.
+ * Draw every `canvas[data-mark]` inside `root` (one mark per canvas, sized by
+ * CSS) when it first comes into view, and again only if its size on screen
+ * changes. Returns a cleanup function.
  */
 export function mountMarks(root: ParentNode, factorList: readonly Factor[]): () => void {
   const items = [...root.querySelectorAll<HTMLCanvasElement>('canvas[data-mark]')].flatMap((canvas) => {
     const factor = factorList.find((f) => f.code === canvas.dataset.mark),
       ctx = canvas.getContext('2d');
     if (!factor || !ctx) return [];
-    return [{ canvas, ctx, p: visualParameters(factor, factorList), visible: false, drawn: false }];
+    return [{ canvas, ctx, p: visualParameters(factor, factorList), visible: false, drawn: '' }];
   });
   if (!items.length) return () => {};
-  const observer = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      const item = items.find((i) => i.canvas === e.target);
-      if (item) {
-        item.visible = e.isIntersecting;
-        item.drawn = false;
-      }
-    }
-  });
-  items.forEach((item) => observer.observe(item.canvas));
-  const stop = onFrame(({ time, beat, beats, still }) => {
-    if (!beat) return;
-    const advance = !still && beats % MARK_BEATS === 0;
+  let raf = 0;
+  const paint = () => {
+    raf = 0;
+    const dpr = dprFor();
     for (const item of items) {
-      if (!item.visible || (item.drawn && !advance)) continue;
+      if (!item.visible) continue;
       const { canvas, ctx, p } = item,
         r = canvas.getBoundingClientRect(),
-        dpr = dprFor();
-      if (!r.width || !r.height) continue;
+        size = `${r.width}×${r.height}@${dpr}`;
+      if (!r.width || !r.height || item.drawn === size) continue;
       fit(canvas, r.width, r.height, dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, r.width, r.height);
-      drawMark(ctx, p, r.width / 2, r.height / 2, Math.min(r.width, r.height), time);
-      item.drawn = true;
+      drawMark(ctx, p, r.width / 2, r.height / 2, Math.min(r.width, r.height));
+      item.drawn = size;
     }
+  };
+  const schedule = () => {
+    if (!raf) raf = requestAnimationFrame(paint);
+  };
+  const observer = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      const item = items.find((i) => i.canvas === e.target);
+      if (item) item.visible = e.isIntersecting;
+    }
+    schedule();
   });
-  const onResize = () => items.forEach((item) => (item.drawn = false));
-  window.addEventListener('resize', onResize);
+  items.forEach((item) => observer.observe(item.canvas));
+  window.addEventListener('resize', schedule);
   return () => {
-    stop();
+    cancelAnimationFrame(raf);
     observer.disconnect();
-    window.removeEventListener('resize', onResize);
+    window.removeEventListener('resize', schedule);
   };
 }
 
@@ -207,23 +218,24 @@ export interface LayerMark {
   y: number;
   /** Box size in SVG user units. */
   size: number;
-  /** Box size that sets the band counts (see MarkOptions.detail). */
+  /** Box size that sets the level of detail (see MarkOptions.detail). */
   detail?: number;
   alpha?: number;
 }
 
 export interface MarkLayer {
-  /** Redraw on the next frame, also while the motion is paused. */
+  /** Repaint on the next animation frame (the drawing changed). */
   invalidate(): void;
-  /** Redraw on every animation frame for the next `ms` milliseconds (while the drawing moves). */
-  wake(ms: number): void;
+  /** Repaint now, e.g. on every tick of a transition; deferred while out of view. */
+  draw(): void;
   destroy(): void;
 }
 
 /**
  * Marks for an SVG drawing, painted on one canvas laid over (or under) the
- * SVG. `marks()` returns the positions in the SVG's user space each frame, so
- * the marks follow the drawing's own transitions.
+ * SVG. `marks()` returns their positions in the SVG's user space; the layer
+ * repaints only when asked to (or on a resize), so a transition calls draw()
+ * on each of its ticks.
  */
 export function mountMarkLayer(
   canvas: HTMLCanvasElement,
@@ -235,17 +247,10 @@ export function mountMarkLayer(
   const params = new Map(factorList.map((f) => [f.code, visualParameters(f, factorList)]));
   let visible = false,
     dirty = true,
-    awakeUntil = 0;
-  const observer = new IntersectionObserver((entries) => {
-    visible = entries[entries.length - 1].isIntersecting;
+    raf = 0;
+  const draw = () => {
     dirty = true;
-  });
-  observer.observe(canvas);
-  const stop = onFrame(({ time, beat, beats, still }) => {
     if (!ctx || !visible) return;
-    // Every frame while the drawing moves, otherwise as the marks above.
-    const awake = performance.now() < awakeUntil;
-    if (!awake && !(beat && (dirty || (!still && beats % MARK_BEATS === 0)))) return;
     const r = canvas.getBoundingClientRect(),
       m = svg()?.getScreenCTM();
     if (!m || !r.width || !r.height) return;
@@ -259,22 +264,31 @@ export function mountMarkLayer(
       if (!p) continue;
       const x = m.a * mark.x + m.c * mark.y + m.e - r.left,
         y = m.b * mark.x + m.d * mark.y + m.f - r.top;
-      drawMark(ctx, p, x, y, mark.size * k, time, {
-        alpha: mark.alpha ?? 1,
-        detail: (mark.detail ?? mark.size) * k,
-      });
+      drawMark(ctx, p, x, y, mark.size * k, { alpha: mark.alpha ?? 1, detail: (mark.detail ?? mark.size) * k });
     }
     dirty = false;
+  };
+  const invalidate = () => {
+    dirty = true;
+    if (!raf)
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (dirty) draw();
+      });
+  };
+  const observer = new IntersectionObserver((entries) => {
+    visible = entries[entries.length - 1].isIntersecting;
+    if (visible && dirty) invalidate();
   });
-  const onResize = () => (dirty = true);
-  window.addEventListener('resize', onResize);
+  observer.observe(canvas);
+  window.addEventListener('resize', invalidate);
   return {
-    invalidate: () => (dirty = true),
-    wake: (ms) => (awakeUntil = Math.max(awakeUntil, performance.now() + ms)),
+    invalidate,
+    draw,
     destroy: () => {
-      stop();
+      cancelAnimationFrame(raf);
       observer.disconnect();
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', invalidate);
     },
   };
 }

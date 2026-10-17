@@ -33,7 +33,7 @@ export function initPapers(): void {
   let hot: { paper?: string; code?: string } = {};
   let links: Link[] = [];
   let root: Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-  // The canvas and the pause button stay when the SVG is redrawn.
+  // The canvas stays when the SVG is redrawn.
   const keep = [...box.children];
   const prints = box.querySelector<HTMLCanvasElement>('[data-paper-map-prints]');
   let marks: LayerMark[] = [];

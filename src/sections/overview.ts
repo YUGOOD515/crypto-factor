@@ -313,6 +313,27 @@ export function initOverview(): void {
       )
     : null;
 
+  // Repaint the marks on every GSAP tick for `ms` milliseconds. The listener
+  // runs after GSAP has rendered the tick's tweens, so the marks keep up with
+  // the SVG nodes instead of trailing them by a frame.
+  let following: (() => void) | null = null;
+  const follow = (ms: number) => {
+    if (following) gsap.ticker.remove(following);
+    following = null;
+    if (!layer) return;
+    layer.invalidate();
+    if (!ms) return;
+    const until = performance.now() + ms;
+    const tick = () => {
+      layer.draw();
+      if (performance.now() < until) return;
+      gsap.ticker.remove(tick);
+      if (following === tick) following = null;
+    };
+    following = tick;
+    gsap.ticker.add(tick);
+  };
+
   const apply = (stepIndex: number, animated: boolean) => {
     const b = built;
     const geo = b.geo;
@@ -351,9 +372,8 @@ export function initOverview(): void {
       tween(node.name, { opacity: state.name ? 1 : 0, duration: d * 0.5 });
     });
 
-    // The marks follow the nodes frame by frame while they move.
-    layer?.wake((d + factors.length * 0.03) * 1000 + 100);
-    layer?.invalidate();
+    // The marks are stills; while the nodes move they follow them tick by tick.
+    follow(d ? (d + factors.length * 0.03) * 1000 + 100 : 0);
 
     for (const [key, g] of b.groups) {
       const on = frame.groups.includes(key);

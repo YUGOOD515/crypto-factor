@@ -6,10 +6,10 @@ import { mountFingerprints } from '../fingerprint/render';
 
 /**
  * Data fingerprints: the large, pointer-driven one in every factor panel and
- * the marks that stand in for factor icons in the catalog list and the
+ * the still marks that stand in for factor icons in the catalog list and the
  * download table (the overview and papers maps mount their own, see
- * mountMarkLayer). Every pause button on the page drives all of them, as the
- * single switch did in the original.
+ * mountMarkLayer). The pause button in each panel's toolbar drives the large
+ * fingerprints of all panels, as the single switch did in the original.
  */
 export function initFingerprints(): void {
   const root = $('#factors');

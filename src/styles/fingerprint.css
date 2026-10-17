@@ -93,10 +93,7 @@
   .fprint__hint--touch { display: inline; }
 }
 
-/* pause / play: the panel toolbar and the papers map share one style, and
-   every button on the page drives the same clock */
-.fprint__motion,
-.fp-motion {
+.fprint__motion {
   display: grid;
   place-items: center;
   width: 29px;
@@ -109,19 +106,8 @@
   transition: border-color var(--dur-1) var(--ease-out);
 }
 
-.fprint__motion:hover,
-.fp-motion:hover {
+.fprint__motion:hover {
   border-color: var(--ink);
-}
-
-.section--ink .fp-motion {
-  border-color: var(--on-dark-2);
-  background: var(--dark);
-  color: var(--on-dark);
-}
-
-.section--ink .fp-motion:hover {
-  border-color: var(--on-dark);
 }
 
 /* corner labels over the stage; pointer events pass through to the canvas */
@@ -230,14 +216,12 @@
   .factor-item__mark { --mark: 30px; --badge: 8px; }
 }
 
-/* without motion every fingerprint is drawn once and the large ones do not
-   follow the pointer, so there is nothing to pause */
+/* without motion the large fingerprint is drawn once and does not follow the
+   pointer, so there is nothing to pause */
 @media (prefers-reduced-motion: reduce) {
-  .fprint__toolbar,
-  .fp-motion { display: none; }
+  .fprint__toolbar { display: none; }
 }
 
 /* the canvases need the script; without it, keep the layout and the badges */
 :root:not(.js) .fmark__print { visibility: hidden; }
-:root:not(.js) .fprint,
-:root:not(.js) .fp-motion { display: none; }
+:root:not(.js) .fprint { display: none; }
