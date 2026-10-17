@@ -90,7 +90,7 @@ npm install
 npm run dev        # build data, then start the Vite dev server
 npm run build      # build data, then the production build in dist/
 npm run preview    # serve dist/ locally
-npm run typecheck
+npm run typecheck  # build data, then type-check
 ```
 
 ## Quarterly update

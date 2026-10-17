@@ -13,7 +13,7 @@
     "dev": "npm run data && vite",
     "build": "npm run data && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "npm run data && tsc --noEmit",
     "deploy": "npm run build && wrangler deploy",
     "cf:dev": "npm run build && wrangler dev"
   },
