@@ -1,0 +1,158 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: var(--header-h);
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--t-1);
+  font-weight: 400;
+  line-height: 1.5;
+  font-feature-settings: 'cv11', 'ss03';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, p, ol, ul, dl, dd, figure, pre {
+  margin: 0;
+}
+
+ol, ul {
+  padding: 0;
+  list-style: none;
+}
+
+img, svg, canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.875em;
+  padding: 1px 4px;
+  background: var(--rule-soft);
+}
+
+.section--ink code {
+  background: var(--dark-2);
+}
+
+strong {
+  font-weight: 650;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.section--ink :focus-visible {
+  outline-color: var(--accent-on-dark);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--white);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  left: var(--s-4);
+  top: var(--s-2);
+  z-index: 100;
+  padding: var(--s-2) var(--s-4);
+  background: var(--ink);
+  color: var(--white);
+  font-weight: 600;
+  transform: translateY(-160%);
+  transition: transform var(--dur-1) var(--ease-out);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* Type primitives */
+.eyebrow,
+.label {
+  font-size: var(--t-0);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+.section--ink .eyebrow,
+.section--ink .label {
+  color: var(--on-dark-2);
+}
+
+.caption,
+.footnote {
+  font-size: var(--t-s);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.footnote {
+  max-width: 72ch;
+  margin-top: var(--s-6);
+}
+
+.footnote--dark {
+  color: var(--on-dark-2);
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

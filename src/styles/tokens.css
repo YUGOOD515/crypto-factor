@@ -1,0 +1,84 @@
+/* Design tokens: Bauhaus / Swiss International Typographic Style.
+   One typeface (Inter), one accent (Bauhaus red), perfect-fourth type scale,
+   4 px spacing grid, square corners, no gradients, no shadows. */
+:root {
+  --white: #ffffff;
+  --paper: #f3f2ee;
+  --ink: #111111;
+  --ink-2: #5c5c5c;
+  --ink-3: #6b6b6b;
+  --rule: #d9d7d0;
+  --rule-soft: #e9e7e1;
+  --accent: #e1251b;
+  --accent-ink: #c8221a;
+
+  --dark: #111111;
+  --dark-2: #1b1b1b;
+  --on-dark: #f3f2ee;
+  --on-dark-2: #a3a3a3;
+  --rule-dark: #383838;
+  --accent-on-dark: #f0412f;
+
+  /* Market overview: explicit Bauhaus homage, primaries on black */
+  --m-gp: #f0412f;
+  --m-pl: #4a8cf0;
+  --m-pr: #f5c518;
+  --m-se: #edebe6;
+
+  --font: 'Inter Variable', Inter, 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Perfect fourth (1.333) on 16px; --t-s is the half step (16 / √1.333 ≈ 14px) */
+  --t-0: 0.75rem;
+  --t-s: 0.875rem;
+  --t-1: 1rem;
+  --t-2: 1.333rem;
+  --t-3: 1.777rem;
+  --t-4: 2.369rem;
+  --t-5: 3.157rem;
+  --t-6: 4.209rem;
+  --t-7: 5.61rem;
+  --t-8: 7.478rem;
+  --t-9: 9.969rem;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --s-10: 128px;
+  --s-11: 160px;
+
+  --cols: 12;
+  --gutter: 24px;
+  --margin: clamp(20px, 4.5vw, 72px);
+  --maxw: 1440px;
+  --header-h: 64px;
+  --section-pad: var(--s-10);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-1: 200ms;
+  --dur-2: 300ms;
+  --dur-3: 400ms;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --cols: 8;
+    --gutter: 20px;
+    --section-pad: var(--s-9);
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --cols: 4;
+    --gutter: 16px;
+    --header-h: 56px;
+    --section-pad: var(--s-8);
+  }
+}

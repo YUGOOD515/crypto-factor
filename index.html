@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crypto Factor · Weekly cryptocurrency factor library</title>
+  <meta name="description" content="Crypto Factor: eight weekly cryptocurrency factors (market, size, momentum, value, anchoring and salience) rebuilt from published research. Statistics, methodology, source papers and free CSV downloads." />
+  <meta name="theme-color" content="#ffffff" />
+  <meta property="og:title" content="Crypto Factor" />
+  <meta property="og:description" content="Weekly cryptocurrency factors rebuilt from published research. Documented, cited and free to download." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script type="module" src="/src/main.ts"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <div class="container site-header__inner">
+      <a class="brand" href="#top" aria-label="Crypto Factor, back to top">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect x="2" y="2" width="13" height="13" /><circle class="brand__dot" cx="23.5" cy="8.5" r="6.5" /><rect x="2" y="17" width="13" height="13" /><rect x="17" y="17" width="13" height="13" /></svg>
+        <span class="brand__name">Crypto Factor</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <ol class="site-nav__list">
+          <li><a href="#overview" data-nav="overview"><span class="site-nav__num">01</span>Overview</a></li>
+          <li><a href="#factors" data-nav="factors"><span class="site-nav__num">02</span>Factors</a></li>
+          <li><a href="#methodology" data-nav="methodology"><span class="site-nav__num">03</span>Methodology</a></li>
+          <li><a href="#papers" data-nav="papers"><span class="site-nav__num">04</span>Papers</a></li>
+          <li><a href="#download" data-nav="download"><span class="site-nav__num">05</span>Download</a></li>
+          <li class="site-nav__sep" aria-hidden="true"></li>
+          <li><a href="#market" data-nav="market"><span class="site-nav__num">06</span>Market</a></li>
+        </ol>
+      </nav>
+      <p class="release-tag"><span class="visually-hidden">Current data </span>Release <!--partial:release-label--></p>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><span class="menu-btn__label">Menu</span><span class="menu-btn__icon" aria-hidden="true"><i></i><i></i></span></button>
+    </div>
+    <div class="header-progress" aria-hidden="true"><span data-progress></span></div>
+  </header>
+
+  <div class="menu" id="menu" data-menu hidden>
+    <nav class="container menu__inner" aria-label="Sections">
+      <p class="eyebrow">Factor data</p>
+      <ol class="menu__list">
+        <li><a href="#overview"><span>01</span>Overview</a></li>
+        <li><a href="#factors"><span>02</span>Factors</a></li>
+        <li><a href="#methodology"><span>03</span>Methodology</a></li>
+        <li><a href="#papers"><span>04</span>Papers</a></li>
+        <li><a href="#download"><span>05</span>Download</a></li>
+      </ol>
+      <p class="eyebrow">Market</p>
+      <ol class="menu__list" start="6">
+        <li><a href="#market"><span>06</span>Market overview</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <main id="main">
+    <!-- ─────────────────────────────── HERO -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <svg class="hero__circle" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="50" /></svg>
+      <div class="container hero__grid">
+        <p class="eyebrow hero__eyebrow">Weekly cryptocurrency factors · Release <!--partial:release-label--></p>
+        <h1 class="hero__title" id="hero-title"><span class="hero__line"><span>Crypto</span></span><span class="hero__line"><span>Factor</span></span></h1>
+        <p class="hero__lede">Eight weekly factors rebuilt from published research: market, size, momentum, value, anchoring and salience. Every series is documented step by step and free to download.</p>
+        <div class="hero__ctas">
+          <a class="btn btn--primary btn--lg" href="#factors"><span class="btn__label">Explore the factors</span><span class="btn__icon btn__icon--down" aria-hidden="true"></span></a>
+          <a class="btn btn--ghost btn--lg" href="#download"><span class="btn__label">Download data</span></a>
+        </div>
+      </div>
+      <figure class="container hero__figure">
+        <div class="barcode" data-hero-barcode role="img" aria-label="Bar chart of all weekly MKT returns from 2017 to 2026: bars above the line are gains, bars below are losses."></div>
+        <div class="barcode__axis" aria-hidden="true" data-hero-axis></div>
+        <figcaption class="caption"><!--partial:hero-caption--></figcaption>
+      </figure>
+      <div class="container hero__facts"><!--partial:hero-facts--></div>
+    </section>
+
+    <!-- ─────────────────────────────── 01 OVERVIEW -->
+    <section class="section section--paper" id="overview" aria-labelledby="overview-title" data-section="overview">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-index" aria-hidden="true"><span>01</span><span class="section-index__of">/ 06</span></p>
+          <div class="section-head__main">
+            <p class="eyebrow">Factor data · Overview</p>
+            <h2 class="section-title" id="overview-title">One calendar, two data sources, two theories.</h2>
+            <p class="section-lede">Every factor in the library is a weekly long-short return built with the same rules. Scroll to see how the eight series relate.</p>
+          </div>
+        </header>
+
+        <div class="scrolly" data-scrolly>
+          <div class="scrolly__graphic">
+            <div class="scrolly__sticky">
+              <svg class="factor-map" data-factor-map viewBox="0 0 760 520" role="img" aria-label="The eight factors, grouped by data source and by theory, with their weekly returns."></svg>
+              <div class="scrolly__progress" aria-hidden="true"><span data-scrolly-progress></span></div>
+            </div>
+          </div>
+          <div class="scrolly__steps">
+            <article class="step" data-step="0">
+              <p class="step__num">01 / 04</p>
+              <h3 class="step__title">Eight factors, one format</h3>
+              <p>Every factor is a weekly return on a shared calendar. Weeks run Monday to Sunday: signals are measured on the formation Sunday and returns are earned through the following Sunday.</p>
+              <p class="step__meta"><!--partial:formation-start--> to <!--partial:data-through--> · <!--partial:weeks--> weeks</p>
+            </article>
+            <article class="step" data-step="1">
+              <p class="step__num">02 / 04</p>
+              <h3 class="step__title">Two data sources</h3>
+              <p>Six factors use trading data: price, market capitalization and volume from CoinMarketCap. The two value factors (M007) use on-chain activity, namely weekly active addresses from Glassnode or Dune.</p>
+              <p class="step__key"><span class="key-glyph key-glyph--square" aria-hidden="true"></span>Trading data <span class="key-glyph key-glyph--circle" aria-hidden="true"></span>On-chain data</p>
+            </article>
+            <article class="step" data-step="2">
+              <p class="step__num">03 / 04</p>
+              <h3 class="step__title">Two theories</h3>
+              <p>Market, size, momentum and value are risk factors: systematic sources of return. Anchoring (CANCHOR) and salience (ST) come from behavioral finance, where investor psychology moves prices.</p>
+              <p class="step__key"><span class="key-glyph key-glyph--square" aria-hidden="true"></span>Filled: risk <span class="key-glyph key-glyph--outline" aria-hidden="true"></span>Outline: behavioral</p>
+            </article>
+            <article class="step" data-step="3">
+              <p class="step__num">04 / 04</p>
+              <h3 class="step__title"><!--partial:weeks--> weeks of returns</h3>
+              <p>Each bar is one week: bars above the line are gains and bars below are losses. The value factors start with the formation week ending <!--partial:value-start-->.</p>
+              <p><a class="link-arrow" href="#factors">Open the factor catalog</a></p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── 02 FACTORS -->
+    <section class="section" id="factors" aria-labelledby="factors-title" data-section="factors">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-index" aria-hidden="true"><span>02</span><span class="section-index__of">/ 06</span></p>
+          <div class="section-head__main">
+            <p class="eyebrow">Factor data · Catalog</p>
+            <h2 class="section-title" id="factors-title">Eight factors, documented the same way.</h2>
+            <p class="section-lede">Pick a factor to see its definition, summary statistics and cumulative performance against the other seven.</p>
+          </div>
+        </header>
+
+        <div class="catalog" data-catalog>
+          <div class="catalog__side">
+            <div class="seg" role="radiogroup" aria-label="Group factors by" data-seg="group">
+              <span class="seg__indicator" aria-hidden="true"></span>
+              <button type="button" class="seg__btn" role="radio" aria-checked="true" data-value="source">Data source</button>
+              <button type="button" class="seg__btn" role="radio" aria-checked="false" data-value="theory">Theory</button>
+            </div>
+            <div class="factor-list" role="tablist" aria-label="Factors" aria-orientation="vertical" data-factor-list>
+              <!--partial:catalog-list-->
+            </div>
+            <p class="glyph-legend"><span><span class="key-glyph key-glyph--square" aria-hidden="true"></span>Trading</span><span><span class="key-glyph key-glyph--circle" aria-hidden="true"></span>On-chain</span><span><span class="key-glyph key-glyph--outline" aria-hidden="true"></span>Behavioral</span></p>
+          </div>
+          <div class="catalog__detail" data-catalog-detail>
+            <!--partial:catalog-panels-->
+            <figure class="nav-chart" data-nav-chart>
+              <div class="nav-chart__head">
+                <figcaption class="label">Value of 1 unit invested · log scale</figcaption>
+                <p class="nav-chart__readout" data-readout></p>
+              </div>
+              <div class="nav-chart__plot" data-plot></div>
+              <p class="nav-chart__legend" aria-hidden="true"><span><i class="key key--accent"></i><span data-legend-selected>Selected</span></span><span><i class="key key--gray"></i>Other factors</span></p>
+            </figure>
+          </div>
+        </div>
+        <p class="footnote">Statistics use each factor's full weekly coverage. t-statistic = mean ÷ (s.d. ÷ √n). Annualized Sharpe ratio = mean ÷ s.d. × √52. Except MKT, every factor is a long-short spread, so no risk-free rate is subtracted.</p>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── 03 METHODOLOGY -->
+    <section class="section section--paper" id="methodology" aria-labelledby="methodology-title" data-section="methodology">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-index" aria-hidden="true"><span>03</span><span class="section-index__of">/ 06</span></p>
+          <div class="section-head__main">
+            <p class="eyebrow">Factor data · Methodology</p>
+            <h2 class="section-title" id="methodology-title">Built the same way, every week.</h2>
+            <p class="section-lede">All factors share one calendar, one investable universe and one weighting rule. They differ only in the signal and the sort.</p>
+          </div>
+        </header>
+
+        <ol class="pipeline" aria-label="Construction pipeline">
+          <li class="pipeline__node"><span class="pipeline__num">01</span><span class="pipeline__title">Raw data</span><span class="pipeline__detail">Price, market cap and volume, active addresses, risk-free rate</span></li>
+          <li class="pipeline__node"><span class="pipeline__num">02</span><span class="pipeline__title">Investable universe</span><span class="pipeline__detail">Seven rules, including a price-consistency filter</span></li>
+          <li class="pipeline__node"><span class="pipeline__num">03</span><span class="pipeline__title">Signal</span><span class="pipeline__detail">One per factor, measured on the formation Sunday</span></li>
+          <li class="pipeline__node"><span class="pipeline__num">04</span><span class="pipeline__title">Sort</span><span class="pipeline__detail">Breakpoints: 30 / 70, 2 × 3 or deciles</span></li>
+          <li class="pipeline__node"><span class="pipeline__num">05</span><span class="pipeline__title">Portfolios</span><span class="pipeline__detail">Weighted by formation-day market cap</span></li>
+          <li class="pipeline__node pipeline__node--accent"><span class="pipeline__num">06</span><span class="pipeline__title">Factor return</span><span class="pipeline__detail">Long leg minus short leg, next week</span></li>
+        </ol>
+
+        <div class="method">
+          <article class="method-block" id="m-calendar" aria-labelledby="m-calendar-title">
+            <header class="method-block__head"><p class="method-block__num">3.1</p><h3 id="m-calendar-title">Weekly calendar</h3></header>
+            <div class="method-block__body">
+              <p>Each formation week runs Monday to Sunday and is labelled by its Sunday, <code>formation_date</code>. The return is earned from that Sunday's close to the next Sunday's close, <code>return_date</code>.</p>
+              <div class="diagram-wrap"><!--partial:diagram-calendar--></div>
+              <div class="math"><!--partial:f-ret--></div>
+            </div>
+            <aside class="sidenote"><p><span class="sidenote__num">1</span>Returns are decimals rounded to four places: 0.0125 is 1.25% per week. A blank cell is missing, not zero.</p><p><span class="sidenote__num">2</span>Except MKT, every factor is a portfolio spread, so no risk-free rate is subtracted.</p></aside>
+          </article>
+
+          <article class="method-block" id="m-universe" aria-labelledby="m-universe-title">
+            <header class="method-block__head"><p class="method-block__num">3.2</p><h3 id="m-universe-title">Investable universe</h3></header>
+            <div class="method-block__body">
+              <p>A coin enters a week's cross-section only if it passes all seven rules:</p>
+              <ol class="rules">
+                <li>Not on the stablecoin list.</li>
+                <li>Formation-day closing price above zero.</li>
+                <li>Formation-day volume above zero.</li>
+                <li>Formation-day market capitalization strictly above US$1,000,000.</li>
+                <li>Next-week return exists and is finite.</li>
+                <li>No identified coin-lifecycle break is crossed by the weekly return or by any historical signal.</li>
+                <li>Passes the paper-style CoinMarketCap price-consistency filter.</li>
+              </ol>
+              <h4 class="label method-sub">Price-consistency filter</h4>
+              <p>Each coin-day needs a price, a market cap and a volume. A day counts as inconsistent when:</p>
+              <ul class="cases">
+                <li>volume is zero but price or market cap changes;</li>
+                <li>volume is non-zero but price or market cap stays exactly unchanged;</li>
+                <li>price and market cap are both zero on two consecutive days;</li>
+                <li>price, market cap or volume is missing.</li>
+              </ul>
+              <div class="diagram-wrap"><!--partial:diagram-filter--></div>
+            </div>
+            <aside class="sidenote"><p><span class="sidenote__num">3</span>The filter flag <code>filt</code> equals 1 only when the price, close and market-cap windows are all complete.</p></aside>
+          </article>
+
+          <article class="method-block" id="m-portfolios" aria-labelledby="m-portfolios-title">
+            <header class="method-block__head"><p class="method-block__num">3.3</p><h3 id="m-portfolios-title">Portfolios and sorts</h3></header>
+            <div class="method-block__body">
+              <p>Every portfolio is value-weighted by formation-day market capitalization:</p>
+              <div class="math math--pair"><!--partial:f-vw--></div>
+              <p>Four sort designs cover the eight factors:</p>
+              <div class="sort-figs"><!--partial:diagram-sorts--></div>
+            </div>
+            <aside class="sidenote"><p><span class="sidenote__num">4</span>In the 2 × 3 sorts, size and signal breakpoints are computed independently each week; the six portfolios are value-weighted.</p><p><span class="sidenote__num">5</span>CANCHOR uses inclusive breakpoints (≤ P10, ≥ P90). ST uses strict ones (&lt; P30, &gt; P70).</p></aside>
+          </article>
+
+          <article class="method-block" id="m-factors" aria-labelledby="m-factors-title">
+            <header class="method-block__head"><p class="method-block__num">3.4</p><h3 id="m-factors-title">Factor by factor</h3></header>
+            <div class="method-block__body">
+              <div class="seg seg--grid" role="tablist" aria-label="Factor construction" data-method-tabs>
+                <span class="seg__indicator" aria-hidden="true"></span>
+                <!--partial:method-tabs-->
+              </div>
+              <div class="method-panels" data-method-panels>
+                <!--partial:method-panels-->
+              </div>
+              <details class="baseline">
+                <summary><span>Relation of every factor to the MS paper baseline</span></summary>
+                <!--partial:baseline-table-->
+              </details>
+            </div>
+            <aside class="sidenote"><p><span class="sidenote__num">6</span>The MS baseline is the replication series of Cong, Karolyi, Tang &amp; Zhao (2026). The current release and the baseline are separate, labelled versions; one does not overwrite the other.</p><p><span class="sidenote__num">7</span>M007_GLASSNODE and M007_DUNE are the same factor built on two active-address sources. Do not use both as independent factors in one regression.</p></aside>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── 04 PAPERS -->
+    <section class="section section--ink" id="papers" aria-labelledby="papers-title" data-section="papers">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-index" aria-hidden="true"><span>04</span><span class="section-index__of">/ 06</span></p>
+          <div class="section-head__main">
+            <p class="eyebrow">Factor data · Papers</p>
+            <h2 class="section-title" id="papers-title">Four papers behind eight factors.</h2>
+            <p class="section-lede">Every factor traces back to peer-reviewed research. Hover over or focus on a paper or a factor to follow its links.</p>
+          </div>
+        </header>
+        <div class="paper-map" data-paper-map></div>
+        <ol class="papers" data-papers><!--partial:papers-cards--></ol>
+        <p class="footnote footnote--dark">MOM3w extends the momentum factor of Liu, Tsyvinski &amp; Wu (2022) with a three-week signal and has no exact counterpart in the MS baseline. The replication series of Cong, Karolyi, Tang &amp; Zhao (2026) is the MS baseline for MKT, SMB, MOM, CANCHOR and ST.</p>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── 05 DOWNLOAD -->
+    <section class="section section--paper" id="download" aria-labelledby="download-title" data-section="download">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-index" aria-hidden="true"><span>05</span><span class="section-index__of">/ 06</span></p>
+          <div class="section-head__main">
+            <p class="eyebrow">Factor data · Download</p>
+            <h2 class="section-title" id="download-title">Take the data with you.</h2>
+            <p class="section-lede">Each package bundles the CSV files with a data dictionary, the license and a citation. Only the latest release is published here.</p>
+          </div>
+        </header>
+
+        <dl class="release-strip">
+          <div><dt>Release</dt><dd><!--partial:release-label--></dd></div>
+          <div><dt>Data through</dt><dd><!--partial:data-through--></dd></div>
+          <div><dt>Frequency</dt><dd>Weekly</dd></div>
+          <div><dt>Updates</dt><dd>Quarterly</dd></div>
+        </dl>
+
+        <div class="dl-grid">
+          <div class="dl-grid__main">
+            <!--partial:download-all-->
+            <!--partial:download-tree-->
+          </div>
+          <div class="dl-grid__table">
+            <h3 class="label">Single factors</h3>
+            <!--partial:download-table-->
+            <p class="footnote">Each single-factor ZIP contains the long-format CSV, the data dictionary, the license and a citation file. Hover over a button to see the file's SHA-256 checksum.</p>
+          </div>
+        </div>
+
+        <div class="dl-docs">
+          <article class="dl-doc dl-doc--wide" aria-labelledby="dict-title">
+            <h3 class="dl-doc__title" id="dict-title">Data dictionary</h3>
+            <!--partial:dictionary-table-->
+          </article>
+          <article class="dl-doc" aria-labelledby="license-title">
+            <h3 class="dl-doc__title" id="license-title">License <span class="draft">Draft</span></h3>
+            <p>Proposed terms: <strong>Creative Commons Attribution 4.0 (CC BY 4.0)</strong>. You may share and adapt the factor series for any purpose if you cite the dataset and the original paper behind each factor you use.</p>
+            <ul class="plain-list">
+              <li>Covers the derived weekly factor returns only. No raw vendor data (CoinMarketCap, Glassnode, Dune) is included.</li>
+              <li>Provided as is, without warranty. Series may be revised in later releases.</li>
+              <li>For research and education. Not investment advice.</li>
+            </ul>
+          </article>
+          <article class="dl-doc" aria-labelledby="cite-title">
+            <h3 class="dl-doc__title" id="cite-title">Citation <span class="draft">Draft</span></h3>
+            <div class="seg seg--small" role="tablist" aria-label="Citation format" data-cite-tabs>
+              <span class="seg__indicator" aria-hidden="true"></span>
+              <button type="button" class="seg__btn" role="tab" id="cite-tab-text" aria-controls="cite-text" aria-selected="true" data-value="text">Text</button>
+              <button type="button" class="seg__btn" role="tab" id="cite-tab-bib" aria-controls="cite-bib" aria-selected="false" tabindex="-1" data-value="bib">BibTeX</button>
+            </div>
+            <pre class="cite" id="cite-text" role="tabpanel" aria-labelledby="cite-tab-text" tabindex="0"><!--partial:citation-text--></pre>
+            <pre class="cite" id="cite-bib" role="tabpanel" aria-labelledby="cite-tab-bib" tabindex="0" hidden><!--partial:citation-bib--></pre>
+            <button type="button" class="btn btn--small btn--copy" data-copy-target="cite"><span class="btn__label">Copy citation</span></button>
+            <p class="footnote">Please also cite the source paper of each factor. Every package includes the full list in CITATION.txt and CITATION.bib.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────── 06 MARKET -->
+    <section class="section section--ink section--market" id="market" aria-labelledby="market-title" data-section="market">
+      <div class="part">
+        <div class="container part__inner">
+          <p class="eyebrow">Part II</p>
+          <p class="part__title" aria-hidden="true">Market overview</p>
+          <svg class="part__shapes" viewBox="0 0 360 120" aria-hidden="true" focusable="false"><rect class="mshape--GP" x="0" y="0" width="120" height="120" /><circle class="mshape--PL" cx="180" cy="60" r="60" /><path class="mshape--PR" d="M300 0L360 120H240Z" /></svg>
+        </div>
+      </div>
+      <div class="container">
+        <header class="section-head">
+          <p class="section-index" aria-hidden="true"><span>06</span><span class="section-index__of">/ 06</span></p>
+          <div class="section-head__main">
+            <p class="eyebrow">Market overview · Token classification</p>
+            <h2 class="section-title" id="market-title"><!--partial:market-token-count--> tokens, four economic functions.</h2>
+            <p class="section-lede">General Payment, Platform, Product and Security tokens: how the market divides by count, by value and by on-chain activity, <!--partial:market-coverage-->.</p>
+          </div>
+        </header>
+
+        <p class="proto-notice" role="note"><span class="proto-notice__tag">Prototype data</span><span><!--partial:market-notice--></span></p>
+
+        <article class="mblock" aria-labelledby="mb-count-title">
+          <header class="mblock__head">
+            <p class="mblock__num">6.1</p>
+            <div class="mblock__text"><h3 id="mb-count-title">Token count</h3><p>Each shape is one token, dropped into the bin of its economic function.</p></div>
+            <div class="mblock__tools"><button type="button" class="btn btn--small btn--light" data-replay><span class="btn__label">Drop again</span><span class="btn__icon btn__icon--replay" aria-hidden="true"></span></button></div>
+          </header>
+          <div class="physics" data-physics role="img" aria-label="Token counts by category: General Payment 14, Platform 541, Product 54, Security 20."></div>
+          <div class="bins" data-bins><!--partial:market-bins--></div>
+        </article>
+
+        <article class="mblock" aria-labelledby="mb-share-title">
+          <header class="mblock__head">
+            <p class="mblock__num">6.2</p>
+            <div class="mblock__text"><h3 id="mb-share-title">Share of tokens and market value</h3><p>Platform tokens dominate the count, but General Payment and Platform tokens together hold 98.7% of market value.</p></div>
+            <div class="mblock__tools">
+              <div class="seg seg--small seg--dark" role="radiogroup" aria-label="Metric" data-seg="metric">
+                <span class="seg__indicator" aria-hidden="true"></span>
+                <button type="button" class="seg__btn" role="radio" aria-checked="true" data-value="value">Market value</button>
+                <button type="button" class="seg__btn" role="radio" aria-checked="false" data-value="count">Token count</button>
+              </div>
+              <div class="seg seg--small seg--dark" role="radiogroup" aria-label="Chart form" data-seg="form">
+                <span class="seg__indicator" aria-hidden="true"></span>
+                <button type="button" class="seg__btn" role="radio" aria-checked="true" data-value="bar">Bars</button>
+                <button type="button" class="seg__btn" role="radio" aria-checked="false" data-value="ring">Ring</button>
+              </div>
+            </div>
+          </header>
+          <div class="share">
+            <div class="share__chart" data-share-chart></div>
+            <div class="share__legend"><!--partial:market-legend--></div>
+          </div>
+        </article>
+
+        <article class="mblock" aria-labelledby="mb-activity-title">
+          <header class="mblock__head">
+            <p class="mblock__num">6.3</p>
+            <div class="mblock__text"><h3 id="mb-activity-title">Active-address index</h3><p>Active addresses by category, each indexed to its own 2018 level (2018 = 100).</p></div>
+          </header>
+          <div class="activity" data-activity-chart></div>
+          <!--partial:market-sr-table-->
+          <p class="footnote footnote--dark">Annual values transcribed from meeting slides at chart resolution. Hover over or tap the chart, or focus on it and use the arrow keys, to read each year.</p>
+        </article>
+
+        <article class="mblock" aria-labelledby="mb-cat-title">
+          <header class="mblock__head">
+            <p class="mblock__num">6.4</p>
+            <div class="mblock__text"><h3 id="mb-cat-title">The four categories</h3><p>Tokens are classified by economic functionality.</p></div>
+          </header>
+          <ul class="mcats"><!--partial:market-categories--></ul>
+        </article>
+
+        <article class="mblock mblock--download" aria-labelledby="mb-dl-title">
+          <header class="mblock__head">
+            <p class="mblock__num">6.5</p>
+            <div class="mblock__text"><h3 id="mb-dl-title">Download the classification</h3><p>The token-to-category table lists every token with a 0 / 1 flag for each category. The chart data above is for display only and is not offered for download.</p></div>
+          </header>
+          <div class="mdl">
+            <!--partial:market-download-card-->
+            <div class="mdl__schema"><h4 class="label">Columns</h4><!--partial:market-schema--></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="#top"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect x="2" y="2" width="13" height="13" /><circle class="brand__dot" cx="23.5" cy="8.5" r="6.5" /><rect x="2" y="17" width="13" height="13" /><rect x="17" y="17" width="13" height="13" /></svg><span class="brand__name">Crypto Factor</span></a>
+        <p>An open library of weekly cryptocurrency factors, rebuilt from published research.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <p class="label">Factor data</p>
+        <ul><li><a href="#overview">Overview</a></li><li><a href="#factors">Factors</a></li><li><a href="#methodology">Methodology</a></li><li><a href="#papers">Papers</a></li><li><a href="#download">Download</a></li></ul>
+      </nav>
+      <nav class="footer-nav" aria-label="More">
+        <p class="label">More</p>
+        <ul><li><a href="#market">Market overview</a></li><li><a href="https://github.com/YUGOOD515/crypto-factor" target="_blank" rel="noopener">Source code on GitHub</a></li></ul>
+      </nav>
+      <div class="footer-notes">
+        <p>Built from CoinMarketCap market data and Glassnode and Dune active-address data. Raw vendor data is not redistributed.</p>
+        <p>No cookies, no tracking, no sign-in.</p>
+        <p>In collaboration with Nanyang Technological University, Singapore. <span class="draft">Wording to be confirmed</span></p>
+        <p>For research and education only. Not investment advice.</p>
+      </div>
+      <p class="footer-bottom"><span>Release <!--partial:release-label--> · data through <!--partial:data-through--></span><span>Updated quarterly</span></p>
+    </div>
+  </footer>
+</body>
+</html>
