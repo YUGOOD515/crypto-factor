@@ -13,7 +13,7 @@
     "dev": "npm run data && vite",
     "build": "npm run data && vite build",
     "preview": "vite preview",
-    "typecheck": "npm run data && tsc --noEmit",
+    "typecheck": "npm run data && tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "deploy": "npm run build && wrangler deploy",
     "cf:dev": "npm run build && wrangler dev"
   },
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@types/d3": "^7.4.3",
     "@types/matter-js": "^0.20.2",
+    "@types/node": "^24.19.2",
     "fflate": "^0.8.3",
     "katex": "^0.19.0",
     "typescript": "~5.9.3",
