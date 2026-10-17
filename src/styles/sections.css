@@ -369,7 +369,7 @@
 .factor-item {
   position: relative;
   display: grid;
-  grid-template-columns: 16px minmax(0, 1fr) 64px;
+  grid-template-columns: 16px 40px minmax(0, 1fr) 64px;
   align-items: center;
   column-gap: var(--s-3);
   width: 100%;
@@ -706,7 +706,7 @@ html:not(.js) .nav-chart {
 @media (max-width: 1024px) {
   .catalog__side { grid-column: 1 / span 3; }
   .catalog__detail { grid-column: 4 / span 5; }
-  .factor-item { grid-template-columns: 16px minmax(0, 1fr); }
+  .factor-item { grid-template-columns: 16px 40px minmax(0, 1fr); }
   .factor-item__spark { display: none; }
   .fp-body { grid-template-columns: 1fr; }
   .fp-desc, .meta { grid-column: 1 / -1; }

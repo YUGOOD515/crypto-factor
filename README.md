@@ -16,7 +16,7 @@ An open library of weekly cryptocurrency factors: eight long-short factor series
 | --- | --- | --- |
 | — | Hero | Every weekly MKT return drawn as a barcode, with the best and worst weeks marked. |
 | 01 | Overview | Scrollytelling factor map: the eight factors as a lineup, regrouped by data source, then by theory, then unfolded into 493 weekly returns. |
-| 02 | Factors | Catalog on the left, detail on the right: definition, type, frequency, coverage, last update, source paper, six statistics (mean, s.d., t-statistic, annualized Sharpe, min, max) and a log-scale cumulative NAV chart. The list can be grouped by data source or by theory. |
+| 02 | Factors | Catalog on the left, detail on the right: definition, type, frequency, coverage, last update, source paper, six statistics (mean, s.d., t-statistic, annualized Sharpe, min, max), an animated data fingerprint and a log-scale cumulative NAV chart. Each list item carries a small fingerprint. The list can be grouped by data source or by theory. |
 | 03 | Methodology | Construction pipeline, weekly calendar, investable universe (seven rules plus the CoinMarketCap consistency filter), the four sort designs, factor-by-factor formulas and the relation to the MS baseline. |
 | 04 | Papers | Paper → factor map and the four source papers with DOI links and a copy-citation button. |
 | 05 | Download | All-factors ZIP and single-factor ZIPs (CSV + data dictionary + license + citation), data dictionary, license and citation (text / BibTeX). Only the latest release is offered. |
@@ -42,6 +42,7 @@ Every project below comes from the team's visual inspiration library. "Dependenc
 | 02 Factors | [uPlot](https://github.com/leeoniya/uPlot) | Dependency | Log-scale NAV chart of the selected factor against the other seven, with hover readout |
 | | [anime.js](https://github.com/juliangarnier/anime) | Dependency | Statistic count-up and the factor-code letter rise (also the hero sweep) |
 | | [Inter](https://github.com/rsms/inter) | Dependency | Tabular figures for statistics and tables |
+| | [YUGOOD515/xjy](https://github.com/YUGOOD515/xjy) | Ported code | Data fingerprint: the contour renderer from `web/fingerprint/render.js` (see below) |
 | 03 Methodology | [diagram-design](https://github.com/cathrynlavery/diagram-design) | Reference | Calendar, filter and sort diagrams: restrained SVG with no shadows, on a 4 px grid |
 | | [tufte-css](https://github.com/edwardtufte/tufte-css) | Reference | Numbered side notes beside the text |
 | 04 Papers | [D3](https://github.com/d3/d3) | Dependency | Paper → factor map with hover/focus highlighting linked to the paper cards |
@@ -54,6 +55,24 @@ Every project below comes from the team's visual inspiration library. "Dependenc
 | | [anime.js](https://github.com/juliangarnier/anime) | Dependency | Part II cover: the square slides in, the circle grows and the triangle drops |
 
 Supporting tools that are not in the library: [KaTeX](https://github.com/KaTeX/KaTeX) renders formulas at build time, [fflate](https://github.com/101arrowz/fflate) builds the download ZIPs at build time, and the toolchain uses Vite, TypeScript and Wrangler. The market section is a lazy-loaded chunk.
+
+## Data fingerprint
+
+Each factor has an animated contour fingerprint: a thumbnail in the catalog list and a large version in the factor panel that turns with the pointer (on touch screens, with a sideways drag). One button pauses all of them. With `prefers-reduced-motion` they are drawn once and stay still.
+
+- **Origin:** `src/fingerprint/render.ts` ports `contourPoints()`, `mountFingerprints()` and the pause switch from [YUGOOD515/xjy](https://github.com/YUGOOD515/xjy) `web/fingerprint/render.js` line for line: the same surface, projection, band counts, color stops, 50 ms frame throttle and pointer handling. `contourPoints()` gives bit-identical output to the original. The NFT SVG edition (`fingerprintSVG`) and the WebGL sculpture were not ported.
+- **Mapping:** `src/fingerprint/data.ts` replaces the original `visualParameters()`.
+
+| Parameter | Factor input | Value |
+| --- | --- | --- |
+| hue | data source | trading 215, on-chain 32 (the original's ETH and BTC hues, about 180° apart) |
+| mood | annualized Sharpe ratio | min–max over the eight factors → 0 … 1 |
+| roughness | standard deviation of weekly returns | min–max → 0.08 … 0.85 |
+| activity | \|t\|-statistic | min–max → 0.1 … 1 |
+| seed | factor ID | position in the sorted IDs × 2π / 8 |
+
+- **Normalization:** the original divided by fixed constants (sentiment / 100, amplitude / 15, log10(volume) / 12). Here the lowest of the eight factors maps to the lower bound of the renderer's original range and the highest to the upper bound. The ranges are the bounds the original clamps to. The fingerprints are therefore relative to this set of factors and change slightly when a release changes the statistics.
+- **Seed:** the original seed (sum of character codes / 100) would give MKT, SMB and MOM almost the same phase (2.36, 2.26 and 2.33 rad), so the sorted IDs are spaced evenly over one period instead.
 
 ## Repository layout
 
@@ -74,7 +93,8 @@ src/
   main.ts                       entry: fonts, styles, section initializers (market chunk lazy-loaded)
   sections/*.ts                 one module per section
   lib/*.ts                      data access, DOM helpers, motion and scroll utilities
-  styles/*.css                  tokens, base, layout, components, sections, market, motion
+  fingerprint/*.ts              data fingerprint: parameter mapping and the canvas renderer ported from xjy
+  styles/*.css                  tokens, base, layout, components, sections, fingerprint, market, motion
 index.html                      page skeleton; <!-- partial:* --> markers are filled at build time
 public/                         _headers (CSP, caching), 404.html, robots.txt, favicon
 wrangler.jsonc                  Cloudflare Workers static-assets configuration
@@ -91,7 +111,7 @@ npm install
 npm run dev        # build data, then start the Vite dev server
 npm run build      # build data, then the production build in dist/
 npm run preview    # serve dist/ locally
-npm run typecheck  # build data, then type-check
+npm run typecheck  # build data, then type-check the site and the Vite config
 ```
 
 ## Quarterly update
@@ -128,6 +148,7 @@ The site uses static assets only, with no Worker script. `public/_headers` sets 
 
 - **网站结构**：第一部分为因子数据（总览、因子目录与详情、方法论、论文、下载），第二部分为市场总览。仅英文，无需登录，不使用 cookie。
 - **风格**：采用 bauhaus-design-skill（包豪斯 / 瑞士国际主义风格）。因子部分为纸色、墨黑加一个红色强调色；市场部分在黑底上使用红、蓝、黄三原色，并以几何形状代表四个类别。
+- **数据指纹**：因子目录中每个因子都有一枚动态数字指纹（列表小图 + 详情大图，可随鼠标转动，可暂停）。渲染代码移植自 YUGOOD515/xjy 的 `web/fingerprint/render.js`，效果与原版一致；色相 = 数据来源（交易 215 / 链上 32），mood = 年化 Sharpe，roughness = 标准差，activity = |t|，seed = 因子 ID。各项统计量在 8 个因子之间做 min–max 归一化，映射到原版渲染器的取值范围。
 - **预览地址**：<https://crypto-factor.ccpcudati.workers.dev>（审核用原型，不是正式网址）。
 - **季度更新**：运行 `python3 scripts/import_xlsx_release.py bundle.xlsx 2026Q3 --latest`，然后 `npm run build` 并推送到 `main`，再部署。在 Cloudflare 连接 Workers Builds 之后，推送到 `main` 就会自动部署。历史版本保留在 `data/releases/`，网站只提供最新版下载。
 - **待确认事项**：市场总览目前为占位数据；PL、PR 定义待确认；币种—类别 0/1 对照表尚未提供；数据许可与引用格式为草案；NTU 表述、logo 和网站正式网址待定；上线前由赵老师与 NTU 负责人确认。

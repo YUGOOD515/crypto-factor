@@ -1,0 +1,189 @@
+/* ───────────────────────── data fingerprint
+   Canvas renderer in src/fingerprint (ported from YUGOOD515/xjy).
+   Thumbnails sit in the factor list; every factor panel has a large one. */
+
+.factor-item__print {
+  display: block;
+  width: 40px;
+  height: 44px;
+}
+
+.fprint {
+  container-type: inline-size;
+  position: relative;
+  margin-top: var(--s-7);
+}
+
+.fprint__stage {
+  position: relative;
+  height: 380px;
+  overflow: hidden;
+  background: var(--paper);
+  border-top: 1.5px solid var(--ink);
+}
+
+.fprint__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* horizontal drags turn the shape on touch screens; vertical ones still scroll */
+  touch-action: pan-y;
+}
+
+/* bottom-centre toolbar, as in the original */
+.fprint__toolbar {
+  position: absolute;
+  bottom: var(--s-4);
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: var(--t-0);
+  color: var(--ink-2);
+}
+
+.fprint__hint--touch {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .fprint__hint--pointer { display: none; }
+  .fprint__hint--touch { display: inline; }
+}
+
+.fprint__motion {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border: 1px solid var(--ink-3);
+  background: var(--white);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1;
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+
+.fprint__motion:hover {
+  border-color: var(--ink);
+}
+
+/* corner labels over the stage; pointer events pass through to the canvas */
+.fprint__params {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 380px;
+  pointer-events: none;
+}
+
+.fprint__param {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+.fprint__param::before {
+  content: '';
+  display: block;
+  width: 25px;
+  margin-bottom: 7px;
+  border-top: 1px solid var(--ink-3);
+}
+
+.fprint__param--tl { top: var(--s-5); left: var(--s-5); }
+.fprint__param--tr { top: var(--s-5); right: var(--s-5); }
+.fprint__param--bl { bottom: var(--s-5); left: var(--s-5); }
+.fprint__param--br { bottom: var(--s-5); right: var(--s-5); }
+
+.fprint__param--tr,
+.fprint__param--br {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.fprint__param dt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--t-0);
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+.fprint__param--tr dt,
+.fprint__param--br dt {
+  align-items: flex-end;
+}
+
+.fprint__name {
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.fprint__param dd {
+  margin-top: var(--s-1);
+  font-size: var(--t-1);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.fprint__caption {
+  margin-top: var(--s-3);
+  max-width: 68ch;
+  font-size: var(--t-0);
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+/* narrow panels: the labels move under the stage as a 2 × 2 grid */
+@container (max-width: 559px) {
+  .fprint__stage { height: 320px; }
+  .fprint__params {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    height: auto;
+  }
+  .fprint__param {
+    position: static;
+    padding: var(--s-3) var(--s-4) var(--s-4) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .fprint__param:nth-child(even) {
+    padding-left: var(--s-4);
+    border-left: 1px solid var(--rule);
+  }
+  .fprint__param::before { display: none; }
+  .fprint__param--tr,
+  .fprint__param--br,
+  .fprint__param--tr dt,
+  .fprint__param--br dt {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .fprint__caption { margin-top: var(--s-4); }
+}
+
+@media (max-width: 767px) {
+  /* the factor list becomes a row of chips; keep them compact */
+  .factor-item__print { display: none; }
+}
+
+/* without motion the shape is drawn once and does not follow the pointer */
+@media (prefers-reduced-motion: reduce) {
+  .fprint__toolbar { display: none; }
+}
+
+/* the canvases need the script; without it, keep the layout and hide them */
+:root:not(.js) .factor-item__print { visibility: hidden; }
+:root:not(.js) .fprint { display: none; }

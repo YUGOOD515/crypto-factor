@@ -494,9 +494,32 @@ const paperCite = (x) => `${x.short} (${x.year})`;
 P['catalog-list'] = factors.map((f, i) => `
 <button class="factor-item" type="button" role="tab" id="tab-${f.code}" aria-controls="panel-${f.code}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-code="${f.code}" data-source="${f.source}" data-theory="${f.theory}">
   <span class="factor-item__glyph">${glyph(f.source, f.theory)}</span>
+  <canvas class="factor-item__print" data-factor="${f.code}" data-size="small" aria-hidden="true"></canvas>
   <span class="factor-item__text"><span class="factor-item__code">${esc(f.code)}</span><span class="factor-item__name">${esc(f.name)}</span></span>
   <svg class="factor-item__spark" viewBox="0 0 64 20" aria-hidden="true" focusable="false"><path d="${sparkPath(f)}"/></svg>
 </button>`).join('');
+
+// Data fingerprint (src/fingerprint): the canvas is drawn client-side; the
+// labels carry the statistics it is drawn from.
+const countWord = (n) => ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'][n] ?? String(n);
+const printParam = (pos, name, stat, value) =>
+  `<div class="fprint__param fprint__param--${pos}"><dt><span class="fprint__name">${name}</span><span class="visually-hidden">: </span><span class="fprint__stat">${stat}</span></dt><dd>${value}</dd></div>`;
+const fingerprint = (f) => {
+  const s = f.stats;
+  return `<figure class="fprint">
+    <div class="fprint__stage">
+      <canvas class="fprint__canvas" data-factor="${f.code}" role="img" aria-label="${esc(f.code)} data fingerprint"></canvas>
+      <div class="fprint__toolbar"><span class="fprint__hint fprint__hint--pointer">Move the pointer to explore</span><span class="fprint__hint fprint__hint--touch">Drag sideways to explore</span><button class="fprint__motion" type="button" data-fp-motion aria-label="Pause animation">Ⅱ</button></div>
+    </div>
+    <dl class="fprint__params">
+      ${printParam('tl', 'Hue', 'Data source', f.source === 'onchain' ? 'On-chain' : 'Trading')}
+      ${printParam('tr', 'Mood', 'Sharpe ratio', plain(s.sharpe, 2))}
+      ${printParam('bl', 'Roughness', 'Std. deviation', plain(s.sd, 2, '%'))}
+      ${printParam('br', 'Activity', '|t|-statistic', plain(Math.abs(s.t), 2))}
+    </dl>
+    <figcaption class="fprint__caption">Data fingerprint of ${esc(f.code)}. Hue follows the data source, mood the Sharpe ratio, roughness the standard deviation and the speed of the motion the |t|-statistic, each scaled between the lowest and highest of the ${countWord(factors.length)} factors; the factor ID sets the phase.</figcaption>
+  </figure>`;
+};
 
 const statCell = (key, label, value, display, note) =>
   `<div class="stat"><dt>${label}</dt><dd><span class="stat__value" data-stat="${key}" data-value="${value}">${display}</span></dd><dd class="stat__note">${note}</dd></div>`;
@@ -520,6 +543,7 @@ P['catalog-panels'] = factors.map((f, i) => {
     <ul class="tags">${tags}</ul>
   </header>
   <p class="fp-summary">${esc(m.summary)}</p>
+  ${fingerprint(f)}
   <dl class="stats" aria-label="Summary statistics of weekly returns">
     ${statCell('mean', 'Mean', s.mean, plain(s.mean, 2, '%'), 'per week')}
     ${statCell('sd', 'Std. deviation', s.sd, plain(s.sd, 2, '%'), 'per week')}
