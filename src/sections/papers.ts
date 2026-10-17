@@ -1,11 +1,14 @@
 import { select, type Selection } from 'd3';
 import { $, $$, onResize } from '../lib/dom';
 import { data, factorByCode } from '../lib/data';
+import { mountMarkLayer, type LayerMark } from '../fingerprint/mark';
 import { focusTarget, scrollToTarget } from '../lib/scroll';
 
 /**
  * 04 Papers: an orthogonal paper → factor map (D3). Hover or focus on a paper,
- * a factor or a paper card highlights the same links everywhere.
+ * a factor or a paper card highlights the same links everywhere. Factors are
+ * drawn as fingerprint marks (on a canvas under the SVG) with their category
+ * glyph as a badge.
  */
 
 interface Link {
@@ -16,6 +19,11 @@ interface Link {
 }
 
 const MIN_WIDTH = 720;
+/** Fingerprint mark box and badge size, in px. */
+const MARK = 32;
+const BADGE = 9;
+const HALO = 2.5;
+const DIM = 0.16; // keep in sync with `.paper-map .is-dim` in styles/sections.css
 
 export function initPapers(): void {
   const box = $('[data-paper-map]');
@@ -25,6 +33,19 @@ export function initPapers(): void {
   let hot: { paper?: string; code?: string } = {};
   let links: Link[] = [];
   let root: Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+  // The canvas and the pause button stay when the SVG is redrawn.
+  const keep = [...box.children];
+  const prints = box.querySelector<HTMLCanvasElement>('[data-paper-map-prints]');
+  let marks: LayerMark[] = [];
+  const dimmed = new Set<string>();
+  const layer = prints
+    ? mountMarkLayer(
+        prints,
+        () => root?.node() ?? null,
+        () => marks.map((m) => ({ ...m, alpha: dimmed.has(m.code) ? DIM : 1 })),
+        data.factors,
+      )
+    : null;
 
   const paint = () => {
     const active = Boolean(hot.paper || hot.code);
@@ -44,6 +65,9 @@ export function initPapers(): void {
         .classed('is-dim', (code) => active && !hotCodes.has(code));
       root.selectAll('.pm-ext-label').classed('is-dim', active && !hotCodes.has('MOM3w'));
     }
+    dimmed.clear();
+    if (active) for (const f of data.factors) if (!hotCodes.has(f.code)) dimmed.add(f.code);
+    layer?.invalidate();
     for (const card of cards) card.classList.toggle('is-hot', hotPapers.has(card.dataset.paper ?? ''));
     for (const chip of chips) {
       const paper = chip.closest<HTMLElement>('.paper')?.dataset.paper ?? '';
@@ -68,8 +92,9 @@ export function initPapers(): void {
   const render = (width: number) => {
     box.hidden = width < MIN_WIDTH;
     if (width < MIN_WIDTH) {
-      box.replaceChildren();
+      box.replaceChildren(...keep);
       root = null;
+      marks = [];
       return;
     }
     const H = 480;
@@ -81,7 +106,7 @@ export function initPapers(): void {
     const boxH = 118;
     const colW = width / factors.length;
     const fy = 372;
-    const glyph = 22;
+    const glyph = MARK;
     const factorTop = fy - glyph / 2 - 10;
     const compact = colW < 150;
     const px = (i: number) => i * (boxW + gap) + boxW / 2;
@@ -124,7 +149,8 @@ export function initPapers(): void {
       }),
     );
 
-    box.replaceChildren();
+    box.replaceChildren(...keep);
+    marks = factors.map((f) => ({ code: f.code, x: fx(f.code), y: fy, size: MARK }));
     const svg = select(box)
       .append('svg')
       .attr('viewBox', `0 0 ${width} ${H}`)
@@ -214,16 +240,25 @@ export function initPapers(): void {
       const f = factorByCode.get(code);
       if (!f) return;
       const g = select(this);
+      // Category badge in the bottom-right corner of the mark, on a halo
+      // that clears the fingerprint lines behind it.
       const outline = f.theory === 'behavioral' ? ' is-outline' : '';
-      if (f.source === 'onchain') g.append('circle').attr('class', `pm-glyph${outline}`).attr('r', glyph / 2);
-      else {
-        g.append('rect')
-          .attr('class', `pm-glyph${outline}`)
-          .attr('x', -glyph / 2)
-          .attr('y', -glyph / 2)
-          .attr('width', glyph)
-          .attr('height', glyph);
-      }
+      const round = f.source === 'onchain';
+      const at = glyph / 2 - BADGE;
+      g.append('rect')
+        .attr('class', 'pm-halo')
+        .attr('x', at - HALO)
+        .attr('y', at - HALO)
+        .attr('width', BADGE + HALO * 2)
+        .attr('height', BADGE + HALO * 2)
+        .attr('rx', round ? BADGE / 2 + HALO : 0);
+      g.append('rect')
+        .attr('class', `pm-glyph${outline}`)
+        .attr('x', at)
+        .attr('y', at)
+        .attr('width', BADGE)
+        .attr('height', BADGE)
+        .attr('rx', round ? BADGE / 2 : 0);
       const label = compact && f.variant ? f.short : f.code;
       g.append('text').attr('class', 'pm-code').attr('y', glyph / 2 + 24).attr('text-anchor', 'middle').text(label);
       const name = compact ? (f.variant ?? '') : f.name;
@@ -251,6 +286,7 @@ export function initPapers(): void {
         }
       });
     paint();
+    layer?.invalidate();
   };
 
   const openPaper = (id: string) => {

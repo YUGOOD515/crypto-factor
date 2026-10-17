@@ -2,11 +2,14 @@ import scrollama from 'scrollama';
 import { $, $$, debounce, svgEl } from '../lib/dom';
 import { data, yearStarts, type Factor } from '../lib/data';
 import { reducedMotion } from '../lib/motion';
+import { mountMarkLayer, type LayerMark } from '../fingerprint/mark';
 import { gsap, ScrollTrigger } from '../lib/scroll';
 
 /**
  * 01 Overview: a sticky factor map that regroups as the reader scrolls.
- * Step 0 lineup · 1 by data source (shape) · 2 by theory (fill) · 3 weekly returns.
+ * Step 0 lineup · 1 by data source (badge shape, fingerprint hue) · 2 by theory
+ * (badge fill) · 3 weekly returns. Every factor is drawn as its fingerprint
+ * mark (painted on a canvas under the SVG) with its category glyph as a badge.
  */
 
 type Mode = 'wide' | 'narrow';
@@ -57,7 +60,7 @@ const GEOMETRY: Record<Mode, Geometry> = {
     names: { lineup: true, grouped: true },
     timeline: { x0: 40, x1: 720, y: 410, caption: [40, 386] },
     axis: { x0: 184, x1: 750, y: 474 },
-    rows: { top: 34, pitch: 56, half: 19, x0: 184, x1: 750, glyph: 14, glyphX: 10, glyphDy: 0, labelX: 28, labelDy: 5 },
+    rows: { top: 34, pitch: 56, half: 19, x0: 184, x1: 750, glyph: 28, glyphX: 14, glyphDy: 0, labelX: 34, labelDy: 5 },
     note: [184, 514],
     yearEvery: 1,
   },
@@ -74,7 +77,7 @@ const GEOMETRY: Record<Mode, Geometry> = {
     names: { lineup: true, grouped: false },
     timeline: { x0: 16, x1: 344, y: 394, caption: [16, 372] },
     axis: { x0: 0, x1: 360, y: 392 },
-    rows: { top: 38, pitch: 44, half: 11, x0: 0, x1: 360, glyph: 9, glyphX: 4.5, glyphDy: -19, labelX: 14, labelDy: -15 },
+    rows: { top: 38, pitch: 44, half: 11, x0: 0, x1: 360, glyph: 16, glyphX: 8, glyphDy: -19, labelX: 21, labelDy: -14 },
     note: [0, 434],
     yearEvery: 3,
   },
@@ -152,10 +155,26 @@ function frameFor(step: number, g: Geometry, factors: Factor[]): Frame {
   return { nodes, groups: [], divider: false, axis: 'axis', rows: true };
 }
 
+/** Badge (category glyph) size for a mark of size `s`; hidden on marks under 20. */
+const badgeSize = (s: number) => Math.max(6, Math.round(s * 0.27));
+const BADGE_MIN_MARK = 20;
+const HALO = 2.5;
+
+interface MapNode {
+  g: SVGGElement;
+  /** Mark box size, tweened alongside the node; `target` is where it is heading. */
+  mark: { s: number; target: number };
+  badge: SVGGElement;
+  halo: SVGRectElement;
+  glyph: SVGRectElement;
+  label: SVGGElement;
+  name: SVGTextElement;
+}
+
 interface Built {
   mode: Mode;
   geo: Geometry;
-  nodes: Map<string, { g: SVGGElement; glyph: SVGRectElement; label: SVGGElement; name: SVGTextElement }>;
+  nodes: Map<string, MapNode>;
   groups: Map<GroupKey, SVGGElement>;
   divider: SVGLineElement;
   axis: { g: SVGGElement; line: SVGLineElement; ticks: SVGLineElement[]; labels: SVGTextElement[]; caption: SVGTextElement };
@@ -244,17 +263,20 @@ function build(svg: SVGSVGElement, mode: Mode, factors: Factor[]): Built {
     labels.push(label);
   }
 
-  // Factor glyphs on top.
+  // Factor nodes on top: the fingerprint mark is painted on the canvas under
+  // the SVG at the node's position; the node holds its badge and labels.
   const nodes: Built['nodes'] = new Map();
   for (const f of factors) {
     const g = svgEl('g', { class: 'fm-node' }, svg);
     const s = geo.glyph;
-    const glyph = svgEl('rect', { class: 'fm-glyph', x: -s / 2, y: -s / 2, width: s, height: s, rx: 0 }, g);
+    const badge = svgEl('g', { class: 'fm-badge' }, g);
+    const halo = svgEl('rect', { class: 'fm-halo' }, badge);
+    const glyph = svgEl('rect', { class: 'fm-glyph' }, badge);
     const label = svgEl('g', { class: 'fm-label' }, g);
     svgEl('text', { class: 'fm-code', y: s / 2 + 22, 'text-anchor': 'middle' }, label).textContent = f.code;
     const name = svgEl('text', { class: 'fm-name', y: s / 2 + 40, 'text-anchor': 'middle' }, label);
     name.textContent = f.name;
-    nodes.set(f.code, { g, glyph, label, name });
+    nodes.set(f.code, { g, mark: { s, target: s }, badge, halo, glyph, label, name });
   }
 
   return { mode, geo, nodes, groups, divider, axis: { g: axisG, line, ticks, labels, caption }, rows, clips, note };
@@ -266,11 +288,30 @@ export function initOverview(): void {
   if (!root || !svg) return;
   const steps = $$('.step', root);
   const factors = data.factors;
+  const prints = $<HTMLCanvasElement>('[data-factor-map-prints]');
   // Phones and portrait tablets use the split layout (map on top, text below);
   // keep in sync with the matching @media block in styles/sections.css.
   const narrowQuery = window.matchMedia(SPLIT_QUERY);
   let built = build(svg, narrowQuery.matches ? 'narrow' : 'wide', factors);
   let current = 0;
+  const layer = prints
+    ? mountMarkLayer(
+        prints,
+        () => svg,
+        function* (): Generator<LayerMark> {
+          for (const [code, node] of built.nodes) {
+            yield {
+              code,
+              x: Number(gsap.getProperty(node.g, 'x')),
+              y: Number(gsap.getProperty(node.g, 'y')),
+              size: node.mark.s,
+              detail: node.mark.target,
+            };
+          }
+        },
+        factors,
+      )
+    : null;
 
   const apply = (stepIndex: number, animated: boolean) => {
     const b = built;
@@ -287,14 +328,32 @@ export function initOverview(): void {
       if (!node || !state) return;
       const delay = d ? i * 0.03 : 0;
       tween(node.g, { x: state.x, y: state.y, delay });
-      tween(node.glyph, {
-        attr: { x: -state.s / 2, y: -state.s / 2, width: state.s, height: state.s, rx: state.round ? state.s / 2 : 0 },
+      node.mark.target = state.s;
+      tween(node.mark, { s: state.s, delay });
+      // Badge in the bottom-right corner of the mark's box, on a halo that
+      // clears the fingerprint lines behind it.
+      const size = badgeSize(state.s);
+      const at = state.s / 2 - size;
+      tween(node.glyph, { attr: { x: at, y: at, width: size, height: size, rx: state.round ? size / 2 : 0 }, delay });
+      tween(node.halo, {
+        attr: {
+          x: at - HALO,
+          y: at - HALO,
+          width: size + HALO * 2,
+          height: size + HALO * 2,
+          rx: state.round ? size / 2 + HALO : 0,
+        },
         delay,
       });
+      tween(node.badge, { opacity: state.s >= BADGE_MIN_MARK ? 1 : 0, duration: d * 0.5, delay });
       node.glyph.classList.toggle('is-outline', state.outline);
       tween(node.label, { opacity: state.label ? 1 : 0, duration: d * 0.5, delay: state.label ? d * 0.5 : 0 });
       tween(node.name, { opacity: state.name ? 1 : 0, duration: d * 0.5 });
     });
+
+    // The marks follow the nodes frame by frame while they move.
+    layer?.wake((d + factors.length * 0.03) * 1000 + 100);
+    layer?.invalidate();
 
     for (const [key, g] of b.groups) {
       const on = frame.groups.includes(key);

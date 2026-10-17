@@ -195,11 +195,19 @@
 .factor-map {
   width: 100%;
   height: auto;
-  max-height: calc(100% - 24px);
+  max-height: calc(100% - 45px); /* gap + foot row */
   overflow: visible;
 }
 
+/* progress line, with the fingerprint pause button at its end */
+.scrolly__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
 .scrolly__progress {
+  flex: 1;
   height: 2px;
   background: var(--rule);
 }
@@ -262,9 +270,18 @@
   margin-left: var(--s-4);
 }
 
-/* factor map (SVG) */
+/* factor map (SVG over a canvas with the fingerprint marks) */
+.factor-map__prints {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.factor-map { position: relative; }
 .fm-glyph { fill: var(--ink); stroke: var(--ink); }
-.fm-glyph.is-outline { fill: var(--paper); stroke-width: 3; }
+.fm-glyph.is-outline { fill: var(--paper); stroke-width: 2; }
+.fm-halo { fill: var(--paper); }
 .fm-code { font-size: 15px; font-weight: 700; fill: var(--ink); letter-spacing: -0.01em; }
 .fm-name { font-size: 12px; font-weight: 500; fill: var(--ink-2); letter-spacing: 0.04em; text-transform: uppercase; }
 .fm-group-label { font-size: 13px; font-weight: 700; fill: var(--ink); letter-spacing: 0.1em; text-transform: uppercase; }
@@ -305,7 +322,9 @@
     background: var(--paper);
     pointer-events: auto;
   }
-  .factor-map { max-height: calc(100% - 18px); }
+  .factor-map { max-height: calc(100% - 37px); }
+  .scrolly__foot { gap: var(--s-3); }
+  .scrolly__foot .fp-motion { width: 25px; height: 25px; font-size: 11px; }
   .scrolly__steps {
     grid-column: 1 / -1;
     position: relative;
@@ -369,7 +388,7 @@
 .factor-item {
   position: relative;
   display: grid;
-  grid-template-columns: 16px 40px minmax(0, 1fr) 64px;
+  grid-template-columns: 44px minmax(0, 1fr) 64px;
   align-items: center;
   column-gap: var(--s-3);
   width: 100%;
@@ -402,13 +421,11 @@
   transform: scaleY(1);
 }
 
-.factor-item__glyph {
-  display: flex;
-  color: var(--ink);
-  transition: color var(--dur-2) var(--ease-out);
+.factor-item:hover .fmark {
+  --mark-bg: var(--paper);
 }
 
-.factor-item[aria-selected='true'] .factor-item__glyph {
+.factor-item[aria-selected='true'] .fmark__badge {
   color: var(--accent);
 }
 
@@ -706,7 +723,7 @@ html:not(.js) .nav-chart {
 @media (max-width: 1024px) {
   .catalog__side { grid-column: 1 / span 3; }
   .catalog__detail { grid-column: 4 / span 5; }
-  .factor-item { grid-template-columns: 16px 40px minmax(0, 1fr); }
+  .factor-item { grid-template-columns: 44px minmax(0, 1fr); }
   .factor-item__spark { display: none; }
   .fp-body { grid-template-columns: 1fr; }
   .fp-desc, .meta { grid-column: 1 / -1; }
@@ -737,7 +754,7 @@ html:not(.js) .nav-chart {
     flex: none;
     width: auto;
     min-width: 132px;
-    grid-template-columns: 14px auto;
+    grid-template-columns: 30px auto;
     scroll-snap-align: start;
     border: 1px solid var(--rule);
     padding: var(--s-2) var(--s-4) var(--s-2) var(--s-3);
@@ -1173,9 +1190,25 @@ html:not(.js) .nav-chart {
 }
 
 .paper-map svg {
+  position: relative;
   width: 100%;
   height: 100%;
   overflow: visible;
+}
+
+.paper-map__prints {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.paper-map__motion {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
 }
 
 .pm-node { cursor: pointer; outline: none; }
@@ -1184,7 +1217,8 @@ html:not(.js) .nav-chart {
 .pm-node .pm-title { font-size: 15px; font-weight: 700; fill: var(--on-dark); }
 .pm-node .pm-sub { font-size: 12px; font-weight: 400; fill: var(--on-dark-2); }
 .pm-factor .pm-glyph { fill: var(--on-dark); stroke: var(--on-dark); }
-.pm-factor .pm-glyph.is-outline { fill: var(--dark); stroke-width: 2.5; }
+.pm-factor .pm-glyph.is-outline { fill: var(--dark); stroke-width: 1.75; }
+.pm-factor .pm-halo { fill: var(--dark); }
 .pm-factor .pm-code { font-size: 15px; font-weight: 700; fill: var(--on-dark); }
 .pm-factor .pm-name { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; fill: var(--on-dark-2); }
 .pm-factor .pm-hit { fill: transparent; }
@@ -1373,8 +1407,18 @@ html:not(.js) .nav-chart {
   grid-column: 7 / span 6;
 }
 
-.dl-grid__table > .label {
+.dl-table-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
   margin-bottom: var(--s-4);
+}
+
+/* the pause button overhangs the label line so the table stays level with
+   the package card */
+.dl-table-head .fp-motion {
+  margin-block: -6px;
 }
 
 .dl-hero {
@@ -1491,20 +1535,30 @@ html:not(.js) .nav-chart {
   vertical-align: middle;
 }
 
-.dl-code {
-  display: inline-flex;
+.dl-factor {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: var(--s-2);
+  column-gap: var(--s-3);
 }
 
-.dl-code svg {
-  flex-shrink: 0;
+/* (two classes: .fmark in fingerprint.css loads later) */
+.dl-factor .dl-mark {
+  --mark: 32px;
+  --badge: 9px;
+  --mark-bg: var(--paper);
+  grid-row: span 2;
+}
+
+.dl-code {
+  display: block;
+  align-self: end;
 }
 
 .dl-name {
   display: block;
+  align-self: start;
   margin-top: 2px;
-  padding-left: calc(10px + var(--s-2));
   font-size: var(--t-0);
   font-weight: 400;
   line-height: 1.35;

@@ -1,24 +1,30 @@
 import { $, $$ } from '../lib/dom';
 import { data } from '../lib/data';
-import { isMotionPaused, mountFingerprints, setMotionPaused } from '../fingerprint/render';
+import { isMotionPaused, setMotionPaused } from '../fingerprint/clock';
+import { mountMarks } from '../fingerprint/mark';
+import { mountFingerprints } from '../fingerprint/render';
 
 /**
- * Data fingerprints in the factor catalog: a thumbnail in every list item and
- * a large, pointer-driven one in every factor panel. One pause switch drives
- * all of them, as in the original.
+ * Data fingerprints: the large, pointer-driven one in every factor panel and
+ * the marks that stand in for factor icons in the catalog list and the
+ * download table (the overview and papers maps mount their own, see
+ * mountMarkLayer). Every pause button on the page drives all of them, as the
+ * single switch did in the original.
  */
 export function initFingerprints(): void {
   const root = $('#factors');
-  if (!root || !$('canvas[data-factor]', root)) return;
-  mountFingerprints(root, data.factors);
+  if (root && $('canvas[data-factor]', root)) mountFingerprints(root, data.factors);
+  mountMarks(document, data.factors);
 
-  const buttons = $$<HTMLButtonElement>('[data-fp-motion]', root);
+  const buttons = $$<HTMLButtonElement>('[data-fp-motion]');
   const sync = () => {
     const paused = isMotionPaused();
     for (const button of buttons) {
       // U+FE0E keeps ▶ from turning into an emoji on iOS.
       button.textContent = paused ? '\u25B6\uFE0E' : 'Ⅱ';
-      button.setAttribute('aria-label', paused ? 'Play animation' : 'Pause animation');
+      const label = paused ? 'Play animation' : 'Pause animation';
+      button.setAttribute('aria-label', label);
+      button.title = label;
     }
   };
   for (const button of buttons) {

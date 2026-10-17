@@ -491,10 +491,14 @@ const srcLabel = (s) => meta.sources[s].label;
 const thLabel = (t) => meta.theories[t].label;
 const paperCite = (x) => `${x.short} (${x.year})`;
 
+// Fingerprint mark: the canvas is drawn client-side (src/fingerprint/mark.ts);
+// the category glyph sits on it as a badge and stays visible without script.
+const mark = (f, cls) =>
+  `<span class="fmark ${cls}" data-source="${f.source}"><canvas class="fmark__print" data-mark="${f.code}" aria-hidden="true"></canvas><span class="fmark__badge">${glyph(f.source, f.theory, 10)}</span></span>`;
+
 P['catalog-list'] = factors.map((f, i) => `
 <button class="factor-item" type="button" role="tab" id="tab-${f.code}" aria-controls="panel-${f.code}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-code="${f.code}" data-source="${f.source}" data-theory="${f.theory}">
-  <span class="factor-item__glyph">${glyph(f.source, f.theory)}</span>
-  <canvas class="factor-item__print" data-factor="${f.code}" data-size="small" aria-hidden="true"></canvas>
+  ${mark(f, 'factor-item__mark')}
   <span class="factor-item__text"><span class="factor-item__code">${esc(f.code)}</span><span class="factor-item__name">${esc(f.name)}</span></span>
   <svg class="factor-item__spark" viewBox="0 0 64 20" aria-hidden="true" focusable="false"><path d="${sparkPath(f)}"/></svg>
 </button>`).join('');
@@ -630,7 +634,7 @@ P['download-table'] = `<table class="table dl-table">
   <thead><tr><th scope="col">Factor</th><th scope="col" class="num hide-sm">Weeks</th><th scope="col" class="hide-md">Coverage</th><th scope="col" class="num">Size</th><th scope="col"><span class="visually-hidden">Download</span></th></tr></thead>
   <tbody>${factors.map((f) => {
     const d = downloads[f.code];
-    return `<tr><th scope="row"><span class="dl-code">${glyph(f.source, f.theory, 10)}${esc(f.code)}</span><span class="dl-name">${esc(f.fullName)}</span></th><td class="num hide-sm">${f.stats.n}</td><td class="hide-md dl-cov">${f.formationStart} – ${f.returnEnd}</td><td class="num dl-size">${d.size}</td><td class="dl-cell"><a class="btn btn--small" href="${d.file}" download data-download aria-label="Download ${esc(f.code)} (ZIP, ${d.size})" title="SHA-256 ${d.sha256}"><span class="btn__label">ZIP</span><span class="btn__icon" aria-hidden="true"></span></a></td></tr>`;
+    return `<tr><th scope="row"><span class="dl-factor">${mark(f, 'dl-mark')}<span class="dl-code">${esc(f.code)}</span><span class="dl-name">${esc(f.fullName)}</span></span></th><td class="num hide-sm">${f.stats.n}</td><td class="hide-md dl-cov">${f.formationStart} – ${f.returnEnd}</td><td class="num dl-size">${d.size}</td><td class="dl-cell"><a class="btn btn--small" href="${d.file}" download data-download aria-label="Download ${esc(f.code)} (ZIP, ${d.size})" title="SHA-256 ${d.sha256}"><span class="btn__label">ZIP</span><span class="btn__icon" aria-hidden="true"></span></a></td></tr>`;
   }).join('')}</tbody>
 </table>`;
 

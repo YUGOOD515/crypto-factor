@@ -54,7 +54,7 @@ html.is-locked {
 }
 
 .factor-map.is-rows .fm-glyph.is-outline {
-  stroke-width: 2;
+  stroke-width: 1.5;
 }
 
 /* catalog: per-character code reveal */
