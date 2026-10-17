@@ -1,0 +1,11 @@
+HOW TO CITE (DRAFT, PENDING CONFIRMATION)
+=========================================
+
+Dataset
+-------
+Crypto Factor ({{YEAR}}). Weekly cryptocurrency factor returns, release {{RELEASE}}
+(data through {{DATA_THROUGH}}). [Site URL to be confirmed]
+
+Please also cite the original paper(s) behind each factor you use
+-----------------------------------------------------------------
+{{PAPERS}}

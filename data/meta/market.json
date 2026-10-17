@@ -1,0 +1,23 @@
+{
+  "status": "prototype",
+  "notice": "Prototype data. Counts, market values and activity paths were transcribed from meeting slides and will be replaced by the final dataset.",
+  "categories": {
+    "GP": { "shape": "square", "definition": "Dual utility and investment functionalities.", "definitionStatus": "confirmed" },
+    "PL": { "shape": "circle", "definition": null, "definitionStatus": "to-be-confirmed" },
+    "PR": { "shape": "triangle", "definition": null, "definitionStatus": "to-be-confirmed" },
+    "SE": { "shape": "diamond", "definition": "Primarily derive value from future cash flows, held predominantly for investment purposes.", "definitionStatus": "confirmed" }
+  },
+  "mapping": {
+    "status": "pending",
+    "file": "data/market/token-category-map.csv",
+    "template": "data/market/token-category-map.template.csv",
+    "columns": [
+      { "field": "symbol", "type": "string", "description": "Token ticker symbol." },
+      { "field": "name", "type": "string", "description": "Token name." },
+      { "field": "GP", "type": "0 / 1", "description": "1 if classified as a General Payment token." },
+      { "field": "PL", "type": "0 / 1", "description": "1 if classified as a Platform token." },
+      { "field": "PR", "type": "0 / 1", "description": "1 if classified as a Product token." },
+      { "field": "SE", "type": "0 / 1", "description": "1 if classified as a Security token." }
+    ]
+  }
+}

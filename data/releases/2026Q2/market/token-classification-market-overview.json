@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "available",
+  "title": "Cryptocurrency market structure by economic functionality",
+  "introduction": "A whole-market view of how four economic functions divide the cryptocurrency universe by market value, token count, and active-address dynamics.",
+  "coverage": {
+    "startYear": 2018,
+    "endYear": 2024,
+    "label": "2018-2024"
+  },
+  "snapshot": {
+    "tokenCount": 629,
+    "marketCapUsdBillions": 579.21,
+    "dominantByValue": "General Payment",
+    "dominantByCount": "Platform"
+  },
+  "insights": [
+    "General Payment and Platform tokens account for 98.7% of observed market value.",
+    "Platform tokens represent 86.0% of the classified token universe by count.",
+    "The four activity paths reveal distinct category life cycles from 2018 to 2024."
+  ],
+  "categories": [
+    {
+      "id": "general",
+      "code": "GP",
+      "shortLabel": "General Payment",
+      "name": "General Payment Token",
+      "color": "#0d625b",
+      "definition": "Dual utility and investment functionalities.",
+      "functionNote": "Dual utility and investment functionalities",
+      "tokenCount": 14,
+      "marketCapUsdBillions": 338.5,
+      "activeAddressesThousands": [6300, 6500, 6800, 10700, 9600, 9700, 9600]
+    },
+    {
+      "id": "platform",
+      "code": "PL",
+      "shortLabel": "Platform",
+      "name": "Platform Token",
+      "color": "#4f8e86",
+      "definition": "Dual utility and investment functionalities.",
+      "functionNote": "Dual utility and investment functionalities",
+      "tokenCount": 541,
+      "marketCapUsdBillions": 233.01,
+      "activeAddressesThousands": [3000, 3000, 5000, 13000, 18500, 18500, 25500]
+    },
+    {
+      "id": "product",
+      "code": "PR",
+      "shortLabel": "Product",
+      "name": "Product Token",
+      "color": "#a56f59",
+      "definition": "Dual utility and investment functionalities.",
+      "functionNote": "Dual utility and investment functionalities",
+      "tokenCount": 54,
+      "marketCapUsdBillions": 5.36,
+      "activeAddressesThousands": [15, 20, 30, 80, 35, 28, 33]
+    },
+    {
+      "id": "security",
+      "code": "SE",
+      "shortLabel": "Security",
+      "name": "Security Token",
+      "color": "#87928e",
+      "definition": "Primarily derive value from future cash flows, held predominantly for investment purposes.",
+      "functionNote": "Primarily derive value from future cash flows, held predominantly for investment purposes",
+      "tokenCount": 20,
+      "marketCapUsdBillions": 2.34,
+      "activeAddressesThousands": [8, 4, 15, 37, 14, 8, 8]
+    }
+  ],
+  "activity": {
+    "title": "Active-address dynamics",
+    "metric": "Index",
+    "basis": "2018 = 100",
+    "years": [2018, 2019, 2020, 2021, 2022, 2023, 2024],
+    "description": "Monthly display paths are interpolated from the annual meeting-slide anchors. Each category is indexed to its own 2018 level."
+  },
+  "sourceMetadata": {
+    "kind": "meeting-slide-transcription",
+    "videoTimestamp": "00:39:57-00:46:42",
+    "compositionBasis": "Counts and market capitalizations transcribed from the presented cross-sectional table.",
+    "activityBasis": "Annual active-address paths transcribed at chart resolution. The release importer creates monthly display points and indexes each category to 2018."
+  }
+}

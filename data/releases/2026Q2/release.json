@@ -1,0 +1,88 @@
+{
+  "id": "2026Q2",
+  "source_workbook": "crypto_factor_data_bundle_2017_2026_clean_canchor_4dp.xlsx",
+  "frequency": "weekly",
+  "data_through": "2026-06-14",
+  "factors": {
+    "MKT": {
+      "master_id": "M001",
+      "signal_id": "CRYPTO_MKT",
+      "factor_name": "crypto market factor",
+      "n_rows": 493,
+      "n_nonmissing": 493,
+      "formation_start": "2017-01-01",
+      "formation_end": "2026-06-07",
+      "return_end": "2026-06-14"
+    },
+    "SMB": {
+      "master_id": "M002",
+      "signal_id": "CRYPTO_SIZE",
+      "factor_name": "crypto size factor",
+      "n_rows": 493,
+      "n_nonmissing": 493,
+      "formation_start": "2017-01-01",
+      "formation_end": "2026-06-07",
+      "return_end": "2026-06-14"
+    },
+    "MOM": {
+      "master_id": "M003",
+      "signal_id": "CRYPTO_MOM",
+      "factor_name": "crypto momentum factor",
+      "n_rows": 493,
+      "n_nonmissing": 493,
+      "formation_start": "2017-01-01",
+      "formation_end": "2026-06-07",
+      "return_end": "2026-06-14"
+    },
+    "MOM3w": {
+      "master_id": "M003_RET3W",
+      "signal_id": "CRYPTO_MOM_RET3W",
+      "factor_name": "crypto momentum factor - past 3 week return",
+      "n_rows": 493,
+      "n_nonmissing": 493,
+      "formation_start": "2017-01-01",
+      "formation_end": "2026-06-07",
+      "return_end": "2026-06-14"
+    },
+    "M007_GLASSNODE": {
+      "master_id": "M007_GLASSNODE",
+      "signal_id": "CRYPTO_VALUE_AAMCAP_GLASSNODE",
+      "factor_name": "crypto value factor - glassnode active addresses",
+      "n_rows": 462,
+      "n_nonmissing": 462,
+      "formation_start": "2017-08-06",
+      "formation_end": "2026-06-07",
+      "return_end": "2026-06-14"
+    },
+    "M007_DUNE": {
+      "master_id": "M007_DUNE",
+      "signal_id": "CRYPTO_VALUE_AAMCAP_DUNE",
+      "factor_name": "crypto value factor - dune active addresses",
+      "n_rows": 462,
+      "n_nonmissing": 462,
+      "formation_start": "2017-08-06",
+      "formation_end": "2026-06-07",
+      "return_end": "2026-06-14"
+    },
+    "CANCHOR": {
+      "master_id": "M013",
+      "signal_id": "CANCHOR",
+      "factor_name": "anchoring factor",
+      "n_rows": 493,
+      "n_nonmissing": 493,
+      "formation_start": "2017-01-01",
+      "formation_end": "2026-06-07",
+      "return_end": "2026-06-14"
+    },
+    "ST": {
+      "master_id": "M014",
+      "signal_id": "ST",
+      "factor_name": "salience factor",
+      "n_rows": 493,
+      "n_nonmissing": 493,
+      "formation_start": "2017-01-01",
+      "formation_end": "2026-06-07",
+      "return_end": "2026-06-14"
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "papers": [
+    {
+      "id": "LTW2022",
+      "short": "Liu, Tsyvinski & Wu",
+      "authors": "Liu, Y., Tsyvinski, A., and Wu, X.",
+      "year": 2022,
+      "title": "Common Risk Factors in Cryptocurrency",
+      "journal": "Journal of Finance",
+      "doi": "10.1111/jofi.13119",
+      "summary": "Shows that three factors (cryptocurrency market, size and momentum) capture the cross-section of expected cryptocurrency returns.",
+      "factors": [
+        { "code": "MKT", "role": "source" },
+        { "code": "SMB", "role": "source" },
+        { "code": "MOM", "role": "source" },
+        { "code": "MOM3w", "role": "extension" }
+      ],
+      "bib": { "key": "liu2022common", "author": "Liu, Y. and Tsyvinski, A. and Wu, X." }
+    },
+    {
+      "id": "CKTZ2026",
+      "short": "Cong, Karolyi, Tang & Zhao",
+      "authors": "Cong, L. W., Karolyi, G. A., Tang, K., and Zhao, W.",
+      "year": 2026,
+      "title": "Crypto Value, Factor Pricing, and Market Segmentation",
+      "journal": "Management Science",
+      "doi": "10.1287/mnsc.2024.05875",
+      "summary": "Builds a crypto value signal from network activity relative to market value and studies factor pricing in segmented crypto markets. Its replication package is the MS baseline for this library.",
+      "factors": [
+        { "code": "M007_GLASSNODE", "role": "source" },
+        { "code": "M007_DUNE", "role": "source" }
+      ],
+      "bib": { "key": "cong2026crypto", "author": "Cong, L. W. and Karolyi, G. A. and Tang, K. and Zhao, W." }
+    },
+    {
+      "id": "JSYZZ2026",
+      "short": "Jia, Simkins, Yan, Zhang & Zhao",
+      "authors": "Jia, Y., Simkins, B., Yan, S., Zhang, H., and Zhao, J.",
+      "year": 2026,
+      "title": "Psychological Anchoring Effect and Cross Section of Cryptocurrency Returns",
+      "journal": "Journal of Banking & Finance",
+      "doi": "10.1016/j.jbankfin.2025.107592",
+      "summary": "Links nearness to the 52-week high, a psychological anchor, to the cross-section of cryptocurrency returns.",
+      "factors": [{ "code": "CANCHOR", "role": "source" }],
+      "bib": { "key": "jia2026anchoring", "author": "Jia, Y. and Simkins, B. and Yan, S. and Zhang, H. and Zhao, J." }
+    },
+    {
+      "id": "CZ2024",
+      "short": "Cai & Zhao",
+      "authors": "Cai, C. X., and Zhao, R.",
+      "year": 2024,
+      "title": "Salience Theory and Cryptocurrency Returns",
+      "journal": "Journal of Banking & Finance",
+      "doi": "10.1016/j.jbankfin.2023.107052",
+      "summary": "Applies salience theory to cryptocurrencies, relating salient past daily returns to future cross-sectional returns.",
+      "factors": [{ "code": "ST", "role": "source" }],
+      "bib": { "key": "cai2024salience", "author": "Cai, C. X. and Zhao, R." }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+CRYPTO FACTOR DATA LICENSE (DRAFT, PENDING CONFIRMATION)
+========================================================
+
+Status: DRAFT. These terms are a working proposal and have not yet been
+confirmed by the project leads or partner institutions. Do not rely on them
+until this notice is removed.
+
+Proposed license
+----------------
+The weekly factor return series in this package are proposed to be released
+under the Creative Commons Attribution 4.0 International License (CC BY 4.0),
+https://creativecommons.org/licenses/by/4.0/
+
+You may copy, redistribute, transform and build upon the series for any
+purpose, provided that you give appropriate credit:
+
+  1. cite the Crypto Factor dataset and release (see CITATION.txt), and
+  2. cite the original paper(s) behind each factor you use
+     (listed in CITATION.txt and CITATION.bib).
+
+Scope
+-----
+This license covers the derived weekly factor return series only. The package
+contains no raw third-party vendor data (for example CoinMarketCap, Glassnode
+or Dune data), and no rights to such data are granted.
+
+No warranty
+-----------
+The data are provided "as is", without warranty of any kind, express or
+implied, including accuracy, completeness or fitness for a particular purpose.
+Series may be revised in later quarterly releases.
+
+Not investment advice
+---------------------
+The data are provided for research and education only and do not constitute
+investment advice or a recommendation to buy or sell any asset.
