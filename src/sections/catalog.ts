@@ -6,6 +6,7 @@ import { formatLike, navValue } from '../lib/format';
 import { reducedMotion } from '../lib/motion';
 import { focusTarget, scrollToTarget } from '../lib/scroll';
 import { initSeg } from '../lib/seg';
+import { onThemeChange } from '../lib/theme';
 
 /**
  * 02 Factor catalog: vertical tabs, grouping toggle with FLIP reordering,
@@ -50,10 +51,15 @@ export function initCatalog(): void {
   const makeChart = (code: string) => {
     const sel = factor(code);
     const order = [...data.factors.filter((f) => f.code !== code), sel];
-    const accent = cssVar('--accent') || '#e1251b';
-    const ink3 = cssVar('--ink-3') || '#6b6b6b';
-    const rule = cssVar('--rule') || '#d9d7d0';
-    const ink = cssVar('--ink') || '#111';
+    // Canvas colours are baked in: read the theme tokens here and redraw on a theme change.
+    const color = (name: string, fallback: string) => cssVar(name, plot) || fallback;
+    const accent = color('--accent', '#e1251b');
+    const ink = color('--fg', '#111111');
+    const ink3 = color('--fg-3', '#6b6b6b');
+    const rule = color('--line', '#d9d7d0');
+    const grid = color('--fill', '#e9e7e1');
+    const others = color('--mute-4', '#c4c1b9');
+    const surface = color('--bg', '#ffffff');
     const font = `600 12px ${cssVar('--font') || 'sans-serif'}`;
     const width = plot.clientWidth || 600;
     const height = plot.clientHeight || 340;
@@ -83,7 +89,7 @@ export function initCatalog(): void {
           font,
           size: 46,
           gap: 6,
-          grid: { stroke: '#e9e7e1', width: 1 },
+          grid: { stroke: grid, width: 1 },
           ticks: { show: false },
           splits: (_u, _i, min, max) => LOG_TICKS.filter((t) => t >= min * 0.999 && t <= max * 1.001),
           // keep every chosen tick (uPlot's default log filter would blank most of them)
@@ -95,7 +101,7 @@ export function initCatalog(): void {
         {},
         ...order.map((f, i) => ({
           label: f.code,
-          stroke: i === last - 1 ? accent : '#c4c1b9',
+          stroke: i === last - 1 ? accent : others,
           width: i === last - 1 ? 2.5 : 1.25,
           points: { show: false },
           spanGaps: false,
@@ -107,7 +113,7 @@ export function initCatalog(): void {
         points: {
           size: (_u, si) => (si === last ? 9 : 0),
           fill: accent,
-          stroke: '#ffffff',
+          stroke: surface,
           width: 2,
         },
       },
@@ -249,6 +255,9 @@ export function initCatalog(): void {
   // ── init
   select(selected, { animated: false });
   let lastWidth = plot.clientWidth;
+  onThemeChange(() => {
+    if (chart) makeChart(selected);
+  });
   onResize(plot, (width, height) => {
     if (!chart || width < 10) return;
     const crossed = (width < 520) !== (lastWidth < 520);

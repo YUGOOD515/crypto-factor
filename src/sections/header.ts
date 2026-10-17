@@ -92,7 +92,7 @@ function initMenu(): void {
     lockScroll(next);
     if (next) {
       menu.hidden = false;
-      const links = $$('a, .eyebrow', menu);
+      const links = $$('a, .eyebrow, .seg', menu);
       if (!reducedMotion()) {
         animate(menu, { opacity: [0, 1] }, { duration: 0.25 });
         animate(
@@ -115,7 +115,7 @@ function initMenu(): void {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && open) setOpen(false);
   });
-  window.matchMedia('(min-width: 1181px)').addEventListener('change', (event) => {
+  window.matchMedia('(min-width: 1280px)').addEventListener('change', (event) => {
     if (event.matches) setOpen(false, false);
   });
 }

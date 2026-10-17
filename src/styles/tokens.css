@@ -1,23 +1,38 @@
 /* Design tokens: Bauhaus / Swiss International Typographic Style.
    One typeface (Inter), one accent (Bauhaus red), perfect-fourth type scale,
-   4 px spacing grid, square corners, no gradients, no shadows. */
-:root {
-  --white: #ffffff;
-  --paper: #f3f2ee;
-  --ink: #111111;
-  --ink-2: #5c5c5c;
-  --ink-3: #6b6b6b;
-  --rule: #d9d7d0;
-  --rule-soft: #e9e7e1;
-  --accent: #e1251b;
-  --accent-ink: #c8221a;
+   4 px spacing grid, square corners, no gradients, no shadows.
 
-  --dark: #111111;
-  --dark-2: #1b1b1b;
-  --on-dark: #f3f2ee;
-  --on-dark-2: #a3a3a3;
-  --rule-dark: #383838;
-  --accent-on-dark: #f0412f;
+   Colour is semantic. Components use only the tokens below, and each surface
+   re-declares them: .section--paper moves --bg to the paper tone, and
+   .section--ink carries its own light-on-dark set. [data-theme='dark'] on
+   <html> turns the page dark with the same three steps as the light page:
+   base, paper one step lighter, and ink the deepest. src/lib/theme.ts owns
+   the attribute; a small inline script in index.html sets it before the
+   first paint. */
+:root {
+  color-scheme: light;
+
+  --bg: #ffffff;         /* the surface under the current element */
+  --bg-alt: #f3f2ee;     /* paper: alternate sections, panels, hover rows */
+  --bg-raised: #ffffff;  /* cards that sit on paper */
+  --bg-ink: #111111;     /* ink sections and the download card */
+  --fill: #e9e7e1;       /* inline code, soft diagram nodes, chart grid */
+
+  --fg: #111111;         /* text, strong rules, solid marks */
+  --fg-2: #5c5c5c;       /* secondary text */
+  --fg-3: #6b6b6b;       /* indices, axis labels */
+  --on-fg: #ffffff;      /* text on an --fg fill */
+  --line: #d9d7d0;       /* hairlines */
+
+  --accent: #e1251b;     /* Bauhaus red: marks, fills, progress */
+  --accent-fg: #c8221a;  /* red text */
+  --on-accent: #ffffff;  /* text on a red fill */
+
+  /* muted graphics, strongest first */
+  --mute-1: #a8a59d;     /* negative bars */
+  --mute-2: #b3b0a8;     /* sparklines */
+  --mute-3: #bdbab2;     /* legend key of the other series */
+  --mute-4: #c4c1b9;     /* the other series */
 
   /* Market overview: explicit Bauhaus homage, primaries on black */
   --m-gp: #f0412f;
@@ -82,3 +97,52 @@
     --section-pad: var(--s-8);
   }
 }
+
+/* ───────────────────────── dark theme
+   Screen only: a printout keeps the light palette on white paper. */
+@media screen {
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+
+    --bg: #181817;
+    --bg-alt: #222120;
+    --bg-raised: #2b2a27;
+    --bg-ink: #0b0b0b;
+    --fill: #2b2a27;
+
+    --fg: #f3f2ee;
+    --fg-2: #a3a3a3;
+    --fg-3: #908f8a;
+    --on-fg: #111111;
+    --line: #363532;
+
+    --accent: #f0412f;
+    --accent-fg: #f5574a;
+    --on-accent: #111111;
+
+    --mute-1: #64625d;
+    --mute-2: #5a5853;
+    --mute-3: #53514c;
+    --mute-4: #4b4945;
+  }
+}
+
+/* ───────────────────────── surfaces */
+.section--paper {
+  --bg: var(--bg-alt);
+}
+
+/* Ink: light on dark in both themes (04 papers, 06 market) */
+.section--ink {
+  --bg: var(--bg-ink);
+  --fill: #1b1b1b;
+  --fg: #f3f2ee;
+  --fg-2: #a3a3a3;
+  --fg-3: #a3a3a3;
+  --on-fg: #111111;
+  --line: #383838;
+  --accent: #f0412f;
+  --accent-fg: #f0412f;
+  --on-accent: #ffffff;
+}
+

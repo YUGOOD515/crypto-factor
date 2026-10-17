@@ -18,12 +18,12 @@
 }
 
 .section--paper {
-  background: var(--paper);
+  background: var(--bg);
 }
 
 .section--ink {
-  background: var(--dark);
-  color: var(--on-dark);
+  background: var(--bg);
+  color: var(--fg);
 }
 
 /* Section header: counter in columns 1-2, title block in 3-10 (asymmetric) */
@@ -54,11 +54,7 @@
 }
 
 .section-index__of {
-  color: var(--ink-3);
-}
-
-.section--ink .section-index__of {
-  color: var(--on-dark-2);
+  color: var(--fg-3);
 }
 
 .section-head__main {
@@ -83,11 +79,7 @@
   font-size: var(--t-2);
   font-weight: 350;
   line-height: 1.4;
-  color: var(--ink-2);
-}
-
-.section--ink .section-lede {
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 @media (max-width: 1024px) {

@@ -6,6 +6,8 @@
   <title>Crypto Factor · Weekly cryptocurrency factor library</title>
   <meta name="description" content="Crypto Factor: eight weekly cryptocurrency factors (market, size, momentum, value, anchoring and salience) rebuilt from published research. Statistics, methodology, source papers and free CSV downloads." />
   <meta name="theme-color" content="#ffffff" />
+  <!-- Theme before first paint; keep in step with src/lib/theme.ts. CSP allows it by hash (public/_headers). -->
+  <script>(function(){var t;try{t=localStorage.getItem('cf-theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;if(t==='dark')document.querySelector('meta[name="theme-color"]').setAttribute('content','#181817')})()</script>
   <meta property="og:title" content="Crypto Factor" />
   <meta property="og:description" content="Weekly cryptocurrency factors rebuilt from published research. Documented, cited and free to download." />
   <meta property="og:type" content="website" />
@@ -33,6 +35,7 @@
         </ol>
       </nav>
       <p class="release-tag"><span class="visually-hidden">Current data </span>Release <!--partial:release-label--></p>
+      <div class="seg seg--theme" role="radiogroup" aria-label="Colour theme" data-theme-switch><span class="seg__indicator" aria-hidden="true"></span><button class="seg__btn" type="button" role="radio" aria-checked="false" data-value="light" title="Light theme"><svg class="theme-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="3" /><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" /></svg><span class="visually-hidden">Light</span></button><button class="seg__btn" type="button" role="radio" aria-checked="false" data-value="dark" title="Dark theme"><svg class="theme-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M14 8.53A6 6 0 1 1 7.47 2a4.67 4.67 0 0 0 6.53 6.53z" /></svg><span class="visually-hidden">Dark</span></button><button class="seg__btn" type="button" role="radio" aria-checked="false" data-value="system" title="Match the system setting"><svg class="theme-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.75" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M8 2.25a5.75 5.75 0 0 0 0 11.5z" fill="currentColor" /></svg><span class="visually-hidden">System</span></button></div>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn><span class="menu-btn__label">Menu</span><span class="menu-btn__icon" aria-hidden="true"><i></i><i></i></span></button>
     </div>
     <div class="header-progress" aria-hidden="true"><span data-progress></span></div>
@@ -53,6 +56,10 @@
         <li><a href="#market"><span>06</span>Market overview</a></li>
       </ol>
     </nav>
+    <div class="container menu__theme" data-theme-menu>
+      <p class="eyebrow" id="menu-theme-label">Theme</p>
+      <div class="seg seg--theme-menu" role="radiogroup" aria-labelledby="menu-theme-label" data-theme-switch><span class="seg__indicator" aria-hidden="true"></span><button class="seg__btn" type="button" role="radio" aria-checked="false" data-value="light"><svg class="theme-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="3" /><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" /></svg>Light</button><button class="seg__btn" type="button" role="radio" aria-checked="false" data-value="dark"><svg class="theme-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M14 8.53A6 6 0 1 1 7.47 2a4.67 4.67 0 0 0 6.53 6.53z" /></svg>Dark</button><button class="seg__btn" type="button" role="radio" aria-checked="false" data-value="system"><svg class="theme-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.75" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M8 2.25a5.75 5.75 0 0 0 0 11.5z" fill="currentColor" /></svg>System</button></div>
+    </div>
   </div>
 
   <main id="main">
@@ -269,7 +276,7 @@
         </header>
         <div class="paper-map" data-paper-map><canvas class="paper-map__prints" data-paper-map-prints aria-hidden="true"></canvas></div>
         <ol class="papers" data-papers><!--partial:papers-cards--></ol>
-        <p class="footnote footnote--dark">MOM3w extends the momentum factor of Liu, Tsyvinski &amp; Wu (2022) with a three-week signal and has no exact counterpart in the MS baseline. The replication series of Cong, Karolyi, Tang &amp; Zhao (2026) is the MS baseline for MKT, SMB, MOM, CANCHOR and ST.</p>
+        <p class="footnote">MOM3w extends the momentum factor of Liu, Tsyvinski &amp; Wu (2022) with a three-week signal and has no exact counterpart in the MS baseline. The replication series of Cong, Karolyi, Tang &amp; Zhao (2026) is the MS baseline for MKT, SMB, MOM, CANCHOR and ST.</p>
       </div>
     </section>
 
@@ -395,7 +402,7 @@
           </header>
           <div class="activity" data-activity-chart></div>
           <!--partial:market-sr-table-->
-          <p class="footnote footnote--dark">Annual values transcribed from meeting slides at chart resolution. Hover over or tap the chart, or focus on it and use the arrow keys, to read each year.</p>
+          <p class="footnote">Annual values transcribed from meeting slides at chart resolution. Hover over or tap the chart, or focus on it and use the arrow keys, to read each year.</p>
         </article>
 
         <article class="mblock" aria-labelledby="mb-cat-title">

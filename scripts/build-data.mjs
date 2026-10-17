@@ -746,7 +746,7 @@ if (market) {
               <button type="button" class="btn btn--light" disabled aria-disabled="true"><span class="btn__label">Not yet available</span></button>
             </div>`;
   }
-  P['market-schema'] = `<table class="table table--compact table--dark"><caption class="visually-hidden">Columns of the token-to-category table</caption><thead><tr><th scope="col">Column</th><th scope="col">Type</th><th scope="col">Description</th></tr></thead><tbody>${marketMeta.mapping.columns.map((c) => `<tr><th scope="row"><code>${esc(c.field)}</code></th><td>${esc(c.type)}</td><td>${esc(c.description)}</td></tr>`).join('')}</tbody></table>`;
+  P['market-schema'] = `<table class="table table--compact"><caption class="visually-hidden">Columns of the token-to-category table</caption><thead><tr><th scope="col">Column</th><th scope="col">Type</th><th scope="col">Description</th></tr></thead><tbody>${marketMeta.mapping.columns.map((c) => `<tr><th scope="row"><code>${esc(c.field)}</code></th><td>${esc(c.type)}</td><td>${esc(c.description)}</td></tr>`).join('')}</tbody></table>`;
   P['market-sr-table'] = `<div class="visually-hidden"><table><caption>Active-address index by category (2018 = 100)</caption><thead><tr><th scope="col">Year</th>${cats.map((c) => `<th scope="col">${esc(c.shortLabel)}</th>`).join('')}</tr></thead><tbody>${market.activity.years.map((y, i) => `<tr><th scope="row">${y}</th>${cats.map((c) => `<td>${c.index[i]}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 

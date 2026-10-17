@@ -70,7 +70,7 @@ function initPhysics(cats: MarketCategory[], colors: Record<CategoryCode, string
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const counters = new Map(cats.map((c) => [c.code, $(`.bin[data-cat="${c.code}"] [data-count]`, bins)]));
-  const ruleDark = cssVar('--rule-dark') || '#383838';
+  const ruleDark = cssVar('--line', box) || '#383838';
   const { Bodies, Body, Composite, Engine } = Matter;
 
   let W = 0;
@@ -637,7 +637,7 @@ function initActivity(cats: MarketCategory[], colors: Record<CategoryCode, strin
       .attr('class', 'ac-marker')
       .attr('d', (p) => markerPath(p.c.shape, narrow ? 3.5 : 4.5))
       .attr('fill', (p) => colors[p.c.code])
-      .attr('stroke', '#111111')
+      .style('stroke', 'var(--bg)')
       .attr('stroke-width', 1.5)
       .attr('data-base', (p) => `translate(${x(years[p.i])},${y(p.c.index[p.i])})`)
       .attr('transform', (p) => `translate(${x(years[p.i])},${y(p.c.index[p.i])})`);

@@ -5,7 +5,7 @@
 
 .part {
   padding-block: var(--s-10) var(--s-8);
-  border-bottom: 1px solid var(--rule-dark);
+  border-bottom: 1px solid var(--line);
   overflow: hidden;
 }
 
@@ -61,7 +61,7 @@
   flex: none;
   padding: 2px 8px;
   background: var(--m-pr);
-  color: var(--ink);
+  color: var(--on-fg);
   font-size: var(--t-0);
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -72,7 +72,7 @@
 .mblock {
   margin-top: var(--s-9);
   padding-top: var(--s-4);
-  border-top: 1.5px solid var(--on-dark);
+  border-top: 1.5px solid var(--fg);
 }
 
 .mblock__head {
@@ -88,7 +88,7 @@
   grid-column: 1 / span 2;
   font-size: var(--t-2);
   font-weight: 300;
-  color: var(--on-dark-2);
+  color: var(--fg-2);
   font-variant-numeric: tabular-nums;
 }
 
@@ -106,7 +106,7 @@
 .mblock__text p {
   max-width: 56ch;
   margin-top: var(--s-2);
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 .mblock__tools {
@@ -120,7 +120,7 @@
 .physics {
   position: relative;
   height: 400px;
-  border-bottom: 1.5px solid var(--on-dark);
+  border-bottom: 1.5px solid var(--fg);
 }
 
 .physics canvas {
@@ -154,7 +154,7 @@
   font-size: var(--t-s);
   font-weight: 500;
   letter-spacing: 0;
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 .bin__name {
@@ -191,11 +191,11 @@
   grid-column: 9 / span 4;
 }
 
-.sh-label { font-size: 13px; font-weight: 700; fill: var(--on-dark); letter-spacing: 0.06em; }
-.sh-value { font-size: 15px; font-weight: 650; fill: var(--on-dark); font-variant-numeric: tabular-nums; }
-.sh-center { font-size: 40px; font-weight: 750; fill: var(--on-dark); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-.sh-center-sub { font-size: 12px; font-weight: 600; fill: var(--on-dark-2); letter-spacing: 0.1em; text-transform: uppercase; }
-.sh-track { fill: var(--dark-2); }
+.sh-label { font-size: 13px; font-weight: 700; fill: var(--fg); letter-spacing: 0.06em; }
+.sh-value { font-size: 15px; font-weight: 650; fill: var(--fg); font-variant-numeric: tabular-nums; }
+.sh-center { font-size: 40px; font-weight: 750; fill: var(--fg); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.sh-center-sub { font-size: 12px; font-weight: 600; fill: var(--fg-2); letter-spacing: 0.1em; text-transform: uppercase; }
+.sh-track { fill: var(--fill); }
 
 .mlegend {
   width: 100%;
@@ -206,19 +206,19 @@
 .mlegend th,
 .mlegend td {
   padding: var(--s-3) 0;
-  border-bottom: 1px solid var(--rule-dark);
+  border-bottom: 1px solid var(--line);
   text-align: left;
   font-weight: 400;
 }
 
 .mlegend thead th {
   padding-top: 0;
-  border-bottom: 1.5px solid var(--on-dark);
+  border-bottom: 1.5px solid var(--fg);
   font-size: var(--t-0);
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 .mlegend tbody th {
@@ -250,7 +250,7 @@
 .mlegend__abs {
   display: block;
   font-size: var(--t-0);
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 .mlegend[data-metric='value'] [data-metric='count'],
@@ -262,7 +262,7 @@
 .mlegend tfoot td {
   border-bottom: 0;
   font-weight: 600;
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 .activity {
@@ -277,18 +277,18 @@
 }
 
 .activity:focus-visible {
-  outline: 2px solid var(--accent-on-dark);
+  outline: 2px solid var(--accent);
   outline-offset: 6px;
 }
 
-.ac-axis text { font-size: 12px; font-weight: 600; fill: var(--on-dark-2); font-variant-numeric: tabular-nums; }
-.ac-grid line { stroke: var(--rule-dark); }
-.ac-base { stroke: var(--on-dark); stroke-width: 1; stroke-dasharray: 3 4; }
-.ac-axis .ac-base-label { font-weight: 700; fill: var(--on-dark); }
+.ac-axis text { font-size: 12px; font-weight: 600; fill: var(--fg-2); font-variant-numeric: tabular-nums; }
+.ac-grid line { stroke: var(--line); }
+.ac-base { stroke: var(--fg); stroke-width: 1; stroke-dasharray: 3 4; }
+.ac-axis .ac-base-label { font-weight: 700; fill: var(--fg); }
 .ac-line { fill: none; stroke-width: 2.5; }
 .ac-end { font-size: 13px; font-weight: 700; letter-spacing: 0.02em; }
-.ac-end-sub { font-size: 12px; font-weight: 500; fill: var(--on-dark-2); font-variant-numeric: tabular-nums; }
-.ac-rule { stroke: var(--on-dark); stroke-width: 1; }
+.ac-end-sub { font-size: 12px; font-weight: 500; fill: var(--fg-2); font-variant-numeric: tabular-nums; }
+.ac-rule { stroke: var(--fg); stroke-width: 1; }
 
 .ac-tip {
   position: absolute;
@@ -297,8 +297,8 @@
   z-index: 2;
   min-width: 168px;
   padding: var(--s-3) var(--s-4);
-  background: var(--on-dark);
-  color: var(--ink);
+  background: var(--fg);
+  color: var(--on-fg);
   font-size: var(--t-s);
   font-variant-numeric: tabular-nums;
   pointer-events: none;
@@ -352,7 +352,7 @@
   gap: var(--s-3);
   align-content: start;
   padding-top: var(--s-4);
-  border-top: 1px solid var(--rule-dark);
+  border-top: 1px solid var(--line);
 }
 
 .mcat__shape {
@@ -363,7 +363,7 @@
   font-size: var(--t-0);
   font-weight: 600;
   letter-spacing: 0.1em;
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 .mcat__name {
@@ -378,7 +378,7 @@
 }
 
 .mcat__def--tbc {
-  color: var(--on-dark-2);
+  color: var(--fg-2);
   font-style: italic;
 }
 
@@ -387,12 +387,12 @@
   justify-content: space-between;
   gap: var(--s-3);
   padding: 6px 0;
-  border-bottom: 1px solid var(--rule-dark);
+  border-bottom: 1px solid var(--line);
   font-size: var(--t-s);
 }
 
 .mcat__nums dt {
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 .mcat__nums dd {
@@ -415,7 +415,7 @@
   gap: var(--s-3);
   align-content: start;
   padding: var(--s-6);
-  border: 1.5px dashed var(--rule-dark);
+  border: 1.5px dashed var(--line);
 }
 
 .mdl__card .btn {
@@ -443,10 +443,10 @@
 
 .mdl__card--ready {
   border-style: solid;
-  border-color: var(--on-dark);
+  border-color: var(--fg);
 }
 
-.mdl__card--ready .mdl__status { color: var(--on-dark); }
+.mdl__card--ready .mdl__status { color: var(--fg); }
 .mdl__card--ready .status-dot { background: var(--m-pl); }
 
 .mdl__title {
@@ -456,7 +456,7 @@
 }
 
 .mdl__desc {
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 .mdl__schema {
@@ -470,12 +470,12 @@
 .section--market .table code {
   background: none;
   padding: 0;
-  color: var(--on-dark);
+  color: var(--fg);
   font-weight: 600;
 }
 
 .section--market .table td {
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 @media (max-width: 1024px) {

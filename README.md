@@ -28,6 +28,7 @@ The style follows **[capsrock/bauhaus-design-skill](https://github.com/capsrock/
 
 - **Part I (factor data):** Swiss International Style. Warm paper, black ink and a single red accent. Inter Variable with tabular figures, a perfect-fourth type scale, a 12-column grid, flush-left text and hairline rules. Shape encodes data source (square = trading data, circle = on-chain) and fill encodes theory (filled = risk, outline = behavioral).
 - **Part II (market overview):** an explicit Bauhaus homage. Red, blue and yellow primaries on black, with one shape per category (square GP, circle PL, triangle PR, diamond SE).
+- **Light and dark themes:** the site follows the system setting by default. A Light / Dark / System switch sits next to the release tag (in the menu on phones), and an explicit choice is remembered in `localStorage` (`cf-theme`). Every color is a semantic token in `src/styles/tokens.css` (`--bg`, `--bg-alt`, `--bg-raised`, `--bg-ink`, `--fill`, `--fg`, `--fg-2`, `--fg-3`, `--line`, `--accent`, `--mute-1…4`); `:root[data-theme='dark']` redefines them, and `.section--paper` / `.section--ink` remap `--bg` for their surface, so components carry no light or dark variants. Dark surfaces keep three steps: the page, paper sections and cards one step lighter, and the ink sections (04 Papers, 06 Market) stay the deepest layer. Canvas charts read the tokens and redraw through `onThemeChange()` (`src/lib/theme.ts`). An inline script in `<head>` applies the theme before the first paint.
 - **Motion:** flat and narrative. Each transition explains a change in the data (regroup, unfold, fill, morph) and is never decoration only. All motion respects `prefers-reduced-motion`.
 
 ## Inspiration library: projects used per section
@@ -94,10 +95,10 @@ scripts/
 src/
   main.ts                       entry: fonts, styles, section initializers (market chunk lazy-loaded)
   sections/*.ts                 one module per section
-  lib/*.ts                      data access, DOM helpers, motion and scroll utilities
+  lib/*.ts                      data access, DOM helpers, theme, motion and scroll utilities
   fingerprint/*.ts              data fingerprint: parameter mapping, clock, canvas renderer ported from xjy, still marks
   styles/*.css                  tokens, base, layout, components, sections, fingerprint, market, motion
-index.html                      page skeleton; <!-- partial:* --> markers are filled at build time
+index.html                      page skeleton and pre-paint theme script; <!-- partial:* --> markers are filled at build time
 public/                         _headers (CSP, caching), 404.html, robots.txt, favicon
 wrangler.jsonc                  Cloudflare Workers static-assets configuration
 ```
@@ -135,7 +136,7 @@ Data is updated every quarter (for example, in July with data through the end of
 - **Workers Builds (Git integration):** connect this repository, then set the build command to `npm run build` and the deploy command to `npx wrangler deploy`.
 - **Or from a machine:** run `npx wrangler login`, then `npm run deploy`.
 
-The site uses static assets only, with no Worker script. `public/_headers` sets a strict Content-Security-Policy and the cache rules.
+The site uses static assets only, with no Worker script. `public/_headers` sets a strict Content-Security-Policy and the cache rules. Inline scripts are allowed only by hash (the pre-paint theme script, shared by `index.html` and `public/404.html`); `vite build` fails if an inline script has no matching hash in `public/_headers`.
 
 ## Open items
 
@@ -150,6 +151,7 @@ The site uses static assets only, with no Worker script. `public/_headers` sets 
 
 - **网站结构**：第一部分为因子数据（总览、因子目录与详情、方法论、论文、下载），第二部分为市场总览。仅英文，无需登录，不使用 cookie。
 - **风格**：采用 bauhaus-design-skill（包豪斯 / 瑞士国际主义风格）。因子部分为纸色、墨黑加一个红色强调色；市场部分在黑底上使用红、蓝、黄三原色，并以几何形状代表四个类别。
+- **深色模式**：默认跟随系统设置；页眉“RELEASE 2026 Q2”旁有浅色 / 深色 / 跟随系统切换（手机上在菜单里），手动选择保存在 `localStorage`（`cf-theme`）。所有颜色都是 `src/styles/tokens.css` 中的语义变量，深色模式只重新定义这些变量，组件不再有单独的深色变体。深色下表面分三层：页面底色、纸色区块与卡片稍亮一级，黑色区块（04 论文、06 市场）始终是最深的一层。图表读取变量并在切换时重绘；`<head>` 中的内联脚本在首次绘制前应用主题，其哈希写在 CSP 中，脚本改动而未更新 `public/_headers` 时构建会报错。
 - **数据指纹**：每个因子都有一枚数字指纹。因子详情中为动态大图，可随鼠标转动，工具栏中的暂停按钮可暂停所有大图；其余位置（总览图、因子列表、论文关系图、下载表）原来的图标都换成了静态小指纹，右下角保留小的分类符号（方形 = 交易数据，圆形 = 链上数据；实心 = 风险因子，空心 = 行为因子），图例和标签仍只用符号。小指纹取大图的第一帧，按屏幕尺寸采用类似 mipmap 的两层画法：一层间距约 1.1 px、30% 透明度的密集线条保留形状和平均颜色，上面一层间距约 3 px 的线条保证纹理清晰；线条只计算一次并缓存，重绘时只需描线。系统设置为“减少动态效果”时大图也只绘制一次静止画面。渲染代码移植自 YUGOOD515/xjy 的 `web/fingerprint/render.js`，大图与原版逐点一致；色相 = 数据来源（交易 215 / 链上 32），mood = 年化 Sharpe，roughness = 标准差，activity = |t|，seed = 因子 ID。各项统计量在 8 个因子之间做 min–max 归一化，映射到原版渲染器的取值范围。
 - **预览地址**：<https://crypto-factor.ccpcudati.workers.dev>（审核用原型，不是正式网址）。
 - **季度更新**：运行 `python3 scripts/import_xlsx_release.py bundle.xlsx 2026Q3 --latest`，然后 `npm run build` 并推送到 `main`，再部署。在 Cloudflare 连接 Workers Builds 之后，推送到 `main` 就会自动部署。历史版本保留在 `data/releases/`，网站只提供最新版下载。

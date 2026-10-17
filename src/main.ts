@@ -7,6 +7,7 @@ import './styles/main.css';
 import { $, whenNear } from './lib/dom';
 import { initReveal } from './lib/motion';
 import { initSmoothScroll } from './lib/scroll';
+import { initTheme } from './lib/theme';
 import { initCatalog } from './sections/catalog';
 import { initDownload } from './sections/download';
 import { initFingerprints } from './sections/fingerprints';
@@ -27,6 +28,7 @@ function safely(name: string, init: () => void): void {
   }
 }
 
+safely('theme', initTheme);
 safely('smooth scroll', initSmoothScroll);
 safely('header', initHeader);
 safely('hero', initHero);

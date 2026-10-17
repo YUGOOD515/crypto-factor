@@ -12,8 +12,8 @@ html {
 
 body {
   margin: 0;
-  background: var(--white);
-  color: var(--ink);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font);
   font-size: var(--t-1);
   font-weight: 400;
@@ -55,11 +55,7 @@ code {
   font-family: var(--mono);
   font-size: 0.875em;
   padding: 1px 4px;
-  background: var(--rule-soft);
-}
-
-.section--ink code {
-  background: var(--dark-2);
+  background: var(--fill);
 }
 
 strong {
@@ -71,13 +67,9 @@ strong {
   outline-offset: 3px;
 }
 
-.section--ink :focus-visible {
-  outline-color: var(--accent-on-dark);
-}
-
 ::selection {
   background: var(--accent);
-  color: var(--white);
+  color: var(--on-accent);
 }
 
 [hidden] {
@@ -99,8 +91,8 @@ strong {
   top: var(--s-2);
   z-index: 100;
   padding: var(--s-2) var(--s-4);
-  background: var(--ink);
-  color: var(--white);
+  background: var(--fg);
+  color: var(--on-fg);
   font-weight: 600;
   transform: translateY(-160%);
   transition: transform var(--dur-1) var(--ease-out);
@@ -118,19 +110,14 @@ strong {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   line-height: 1.4;
-  color: var(--ink-2);
-}
-
-.section--ink .eyebrow,
-.section--ink .label {
-  color: var(--on-dark-2);
+  color: var(--fg-2);
 }
 
 .caption,
 .footnote {
   font-size: var(--t-s);
   line-height: 1.5;
-  color: var(--ink-2);
+  color: var(--fg-2);
 }
 
 .footnote {
@@ -138,8 +125,11 @@ strong {
   margin-top: var(--s-6);
 }
 
-.footnote--dark {
-  color: var(--on-dark-2);
+/* src/lib/theme.ts: switch themes in one step, not one fade per element */
+.is-theme-switching *,
+.is-theme-switching *::before,
+.is-theme-switching *::after {
+  transition: none !important;
 }
 
 .tnum {
