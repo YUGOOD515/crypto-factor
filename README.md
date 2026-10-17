@@ -4,6 +4,7 @@ An open library of weekly cryptocurrency factors: eight long-short factor series
 
 - Static site: Vite + TypeScript, no UI framework. Every text, table, formula and diagram is rendered to HTML at build time, so the page is readable before any JavaScript runs.
 - Hosting: Cloudflare Workers (static assets only). The source code lives in this repository.
+- Preview: <https://crypto-factor.ccpcudati.workers.dev> (prototype for review, not the final URL).
 - English only. No login, no cookies, no analytics.
 - Current release: **2026 Q2**, weekly data through 2026-06-14 (493 weeks from the formation week ending 2017-01-01).
 
@@ -104,10 +105,11 @@ Data is updated every quarter (for example, in July with data through the end of
    This writes `data/releases/2026Q3/` and marks it as latest in `manifest.json`.
 2. If needed, update the texts in `data/meta/`, the market file in `data/releases/<id>/market/`, or add `data/market/token-category-map.csv`. Once that CSV exists, the download card switches from "Pending" to "Available" automatically. The build checks the header and makes sure each token has exactly one category.
 3. Run `npm run build`, then check the result with `npm run preview`.
-4. Commit and push to `main`. Cloudflare Workers Builds deploys the site.
+4. Commit and push to `main`, then deploy (see below). Once Workers Builds is connected, every push to `main` deploys automatically.
 
 ## Deployment (Cloudflare Workers)
 
+- **Current deployment:** Worker `crypto-factor` on workers.dev, <https://crypto-factor.ccpcudati.workers.dev>. It was uploaded directly; the Git integration is not connected yet.
 - **Workers Builds (Git integration):** connect this repository, then set the build command to `npm run build` and the deploy command to `npx wrangler deploy`.
 - **Or from a machine:** run `npx wrangler login`, then `npm run deploy`.
 
@@ -126,5 +128,6 @@ The site uses static assets only, with no Worker script. `public/_headers` sets 
 
 - **网站结构**：第一部分为因子数据（总览、因子目录与详情、方法论、论文、下载），第二部分为市场总览。仅英文，无需登录，不使用 cookie。
 - **风格**：采用 bauhaus-design-skill（包豪斯 / 瑞士国际主义风格）。因子部分为纸色、墨黑加一个红色强调色；市场部分在黑底上使用红、蓝、黄三原色，并以几何形状代表四个类别。
-- **季度更新**：运行 `python3 scripts/import_xlsx_release.py bundle.xlsx 2026Q3 --latest`，然后 `npm run build` 并推送到 `main`，Cloudflare 会自动部署。历史版本保留在 `data/releases/`，网站只提供最新版下载。
+- **预览地址**：<https://crypto-factor.ccpcudati.workers.dev>（审核用原型，不是正式网址）。
+- **季度更新**：运行 `python3 scripts/import_xlsx_release.py bundle.xlsx 2026Q3 --latest`，然后 `npm run build` 并推送到 `main`，再部署。在 Cloudflare 连接 Workers Builds 之后，推送到 `main` 就会自动部署。历史版本保留在 `data/releases/`，网站只提供最新版下载。
 - **待确认事项**：市场总览目前为占位数据；PL、PR 定义待确认；币种—类别 0/1 对照表尚未提供；数据许可与引用格式为草案；NTU 表述、logo 和网站正式网址待定；上线前由赵老师与 NTU 负责人确认。
