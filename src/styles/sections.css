@@ -6,15 +6,25 @@
   overflow: hidden;
 }
 
-.hero__circle {
+/* The MKT data fingerprint (src/fingerprint/render.ts) behind the title.
+   The canvas is square and the shape never reaches past 80% of it, so the
+   offsets of a tenth of its side put the shape's right edge on the content
+   edge and its top just under the label row. */
+.hero__print {
+  --print: min(42vw, 620px);
   position: absolute;
   z-index: 0;
-  top: calc(var(--header-h) - min(9vw, 130px));
-  right: calc(-1 * min(9vw, 140px));
-  width: min(40vw, 600px);
-  height: auto;
-  fill: var(--accent);
-  transform-origin: 50% 50%;
+  top: calc(var(--header-h) + var(--s-8) + 32px - var(--print) * 0.1);
+  right: calc(max(var(--margin), (100% - var(--maxw)) / 2) - var(--print) * 0.1);
+  width: var(--print);
+  height: var(--print);
+  pointer-events: none;
+}
+
+.hero__print-label {
+  grid-column: 7 / -1;
+  justify-self: end;
+  text-align: right;
 }
 
 .hero__grid {
@@ -146,6 +156,8 @@
 }
 
 @media (max-width: 1024px) {
+  .hero__eyebrow { grid-column: 1 / span 5; }
+  .hero__print-label { grid-column: 6 / -1; }
   .hero__lede { grid-column: 1 / span 5; }
   .hero__ctas { grid-column: 1 / -1; }
   .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: var(--s-5); }
@@ -155,8 +167,10 @@
 
 @media (max-width: 767px) {
   .hero { padding-top: calc(var(--header-h) + var(--s-6)); }
-  .hero__circle { width: 56vw; top: calc(var(--header-h) - 12vw); right: -16vw; }
+  .hero__print { --print: 62vw; top: calc(var(--header-h) - 2vw); right: -10vw; }
   .hero__eyebrow { grid-column: 1 / span 3; }
+  /* the shape sits under the label's corner here */
+  .hero__print-label { display: none; }
   .hero__title { font-size: clamp(3.5rem, 21vw, 7rem); margin-top: var(--s-6); }
   .hero__lede { grid-column: 1 / -1; font-size: var(--t-1); margin-top: var(--s-6); }
   .hero__ctas { margin-top: var(--s-5); }

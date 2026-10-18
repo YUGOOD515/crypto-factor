@@ -225,3 +225,4 @@
 /* the canvases need the script; without it, keep the layout and the badges */
 :root:not(.js) .fmark__print { visibility: hidden; }
 :root:not(.js) .fprint { display: none; }
+:root:not(.js) .hero__print-label { visibility: hidden; }

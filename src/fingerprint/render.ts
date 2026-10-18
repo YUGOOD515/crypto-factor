@@ -7,14 +7,16 @@
  * moves exactly like the original. Changes: TypeScript types,
  * `canvas[data-factor]` instead of `canvas[data-coin]`, visualParameters() from
  * ./data.ts, the frame timing and pause switch live in ./clock.ts (shared by
- * the fingerprints of all factor panels), and the draw loop runs only while a
- * fingerprint is in view. The original's small canvas variant is replaced by
+ * the fingerprints of all factor panels and the hero), the draw loop runs only
+ * while a fingerprint is in view. Two options serve the hero: `pointerArea`
+ * lets a canvas that sits behind other content follow the pointer, and
+ * `settle` lets it move only briefly instead of all the time. The original's small canvas variant is replaced by
  * the still marks in ./mark.ts; the NFT SVG edition and the WebGL sculpture
  * are not part of this port.
  */
 import type { Factor } from '../lib/data';
 import { onFrame, type Frame } from './clock';
-import { visualParameters, type VisualParams } from './data';
+import { clamp, visualParameters, type VisualParams } from './data';
 
 export { isMotionPaused, setMotionPaused } from './clock';
 
@@ -112,25 +114,78 @@ interface Item {
   ctx: CanvasRenderingContext2D;
   p: VisualParams;
   visible: boolean;
+  /** Pointer position across the canvas, −1 … 1 on each axis. */
+  target: Pointer;
+  /** The position the shape turns to: `target` itself, or easing towards it. */
   mouse: Pointer;
+  /** With `settle`: own time, which runs at `speed` × the clock … */
+  time: number;
+  speed: number;
+  /** … the clock time at the previous beat, and whether the frame drawn last was at rest. */
+  clock: number;
+  rested: boolean;
+}
+
+export interface MountOptions {
+  /**
+   * Follow a mouse or pen over this element instead of over the canvas, for a
+   * canvas that sits behind other content. The position is still measured
+   * from the canvas, but clamped to its edges and eased, so the shape turns
+   * smoothly wherever the pointer enters.
+   */
+  pointerArea?: HTMLElement;
+  /**
+   * Move on its own only briefly: fast when mounted, slowing to a stop within
+   * about four and a half seconds, and woken again by each pointer move.
+   * Once at rest the canvas is not redrawn, so a fingerprint that is always
+   * in view costs nothing while nobody interacts with it.
+   */
+  settle?: boolean;
 }
 
 /** Band count and points per band of the large fingerprint, as in the original. */
 const BANDS = 83,
   STEPS = 112;
+/** Share of the remaining distance an eased pointer covers per 50 ms beat. */
+const EASE = 0.12;
+/**
+ * Settling: speed when mounted and after a pointer move (× the normal speed),
+ * time constant of the slow-down in seconds, and the speed it rests below.
+ */
+const START = 4,
+  WAKE = 0.6,
+  SETTLE = 1,
+  REST = 0.05;
 
 /**
  * Animate every `canvas[data-factor]` inside `container` as a large,
  * pointer-driven fingerprint. `factorList` is also the population the
- * statistics are normalised over. Returns a cleanup function.
+ * statistics are normalised over. A canvas gets `data-drawn` once its first
+ * frame is on it, so CSS can fade it in then. Returns a cleanup function.
  */
-export function mountFingerprints(container: ParentNode, factorList: readonly Factor[]): () => void {
+export function mountFingerprints(
+  container: ParentNode,
+  factorList: readonly Factor[],
+  { pointerArea, settle = false }: MountOptions = {},
+): () => void {
   const items: Item[] = [...container.querySelectorAll<HTMLCanvasElement>('canvas[data-factor]')].flatMap(
     (canvas) => {
       const factor = factorList.find((f) => f.code === canvas.dataset.factor),
         ctx = canvas.getContext('2d');
       if (!factor || !ctx) return [];
-      return [{ canvas, ctx, p: visualParameters(factor, factorList), visible: false, mouse: { x: 0, y: 0 } }];
+      const item: Item = {
+        canvas,
+        ctx,
+        p: visualParameters(factor, factorList),
+        visible: false,
+        target: { x: 0, y: 0 },
+        mouse: { x: 0, y: 0 },
+        time: 0,
+        speed: START,
+        clock: 0,
+        rested: false,
+      };
+      return [item];
     },
   );
   let drawn = false;
@@ -155,25 +210,46 @@ export function mountFingerprints(container: ParentNode, factorList: readonly Fa
   const cleanups: (() => void)[] = [];
   for (const item of items) {
     observer.observe(item.canvas);
+    const area = pointerArea ?? item.canvas;
     const move = (e: PointerEvent) => {
-      const r = item.canvas.getBoundingClientRect();
-      item.mouse = {
-        x: ((e.clientX - r.left) / r.width) * 2 - 1,
-        y: ((e.clientY - r.top) / r.height) * 2 - 1,
-      };
+      // Behind other content a touch is a scroll, not a turn.
+      if (pointerArea && e.pointerType === 'touch') return;
+      const r = item.canvas.getBoundingClientRect(),
+        x = ((e.clientX - r.left) / r.width) * 2 - 1,
+        y = ((e.clientY - r.top) / r.height) * 2 - 1;
+      item.target = pointerArea ? { x: clamp(x, -1, 1), y: clamp(y, -1, 1) } : { x, y };
+      if (settle) item.speed = Math.max(item.speed, WAKE);
     };
-    const reset = () => (item.mouse = { x: 0, y: 0 });
-    item.canvas.addEventListener('pointermove', move);
-    item.canvas.addEventListener('pointerleave', reset);
+    const reset = () => (item.target = { x: 0, y: 0 });
+    area.addEventListener('pointermove', move);
+    area.addEventListener('pointerleave', reset);
     cleanups.push(() => {
-      item.canvas.removeEventListener('pointermove', move);
-      item.canvas.removeEventListener('pointerleave', reset);
+      area.removeEventListener('pointermove', move);
+      area.removeEventListener('pointerleave', reset);
     });
   }
   function draw({ time, beat, still }: Frame) {
     if (!beat || (still && drawn)) return;
     for (const item of items) {
       if (!item.visible) continue;
+      const { target } = item;
+      item.mouse = pointerArea
+        ? { x: item.mouse.x + (target.x - item.mouse.x) * EASE, y: item.mouse.y + (target.y - item.mouse.y) * EASE }
+        : target;
+      let now = time;
+      if (settle) {
+        // Exponential slow-down, integrated exactly so a long gap cannot make the shape jump.
+        const dt = time - item.clock,
+          decay = Math.exp(-dt / SETTLE);
+        item.clock = time;
+        item.time += item.speed * SETTLE * (1 - decay);
+        item.speed = item.speed * decay < REST ? 0 : item.speed * decay;
+        const atRest =
+          !item.speed && Math.abs(target.x - item.mouse.x) + Math.abs(target.y - item.mouse.y) < 0.002;
+        if (atRest && item.rested && drawn) continue;
+        item.rested = atRest;
+        now = item.time;
+      }
       const { canvas, ctx, p, mouse } = item,
         r = canvas.getBoundingClientRect(),
         dpr = Math.min(devicePixelRatio || 1, 2);
@@ -189,7 +265,7 @@ export function mountFingerprints(container: ParentNode, factorList: readonly Fa
         cy = r.height / 2;
       const bands = BANDS,
         steps = STEPS,
-        t = time * (0.3 + p.activity * 0.5);
+        t = now * (0.3 + p.activity * 0.5);
       ctx.lineWidth = 1.4;
       for (let i = 1; i < bands; i++) {
         const latitude = i / bands;
@@ -205,6 +281,7 @@ export function mountFingerprints(container: ParentNode, factorList: readonly Fa
         for (let j = 1; j <= steps; j++) ctx.lineTo(cx + points[j * 3] * size, cy + points[j * 3 + 1] * size);
         ctx.stroke();
       }
+      if (!canvas.hasAttribute('data-drawn')) canvas.setAttribute('data-drawn', '');
     }
     drawn = true;
   }

@@ -17,17 +17,20 @@ html.is-locked {
     animation-delay: 0.12s;
   }
 
-  .hero__circle {
-    animation: circle-in 1.4s var(--ease-out) 0.1s backwards;
+  /* the fingerprint fades in once its first frame is drawn (src/fingerprint/render.ts) */
+  .hero__print[data-drawn] {
+    animation: print-in 1.6s var(--ease-out) backwards;
   }
 
   .hero__eyebrow,
+  .hero__print-label,
   .hero__lede,
   .hero__ctas {
     animation: fade-up 0.9s var(--ease-out) backwards;
   }
 
   .hero__eyebrow { animation-delay: 0.05s; }
+  .hero__print-label { animation-delay: 0.2s; }
   .hero__lede { animation-delay: 0.35s; }
   .hero__ctas { animation-delay: 0.48s; }
 
@@ -40,8 +43,8 @@ html.is-locked {
   from { translate: 0 105%; }
 }
 
-@keyframes circle-in {
-  from { scale: 0.2; opacity: 0; }
+@keyframes print-in {
+  from { scale: 0.7; opacity: 0; }
 }
 
 @keyframes fade-up {

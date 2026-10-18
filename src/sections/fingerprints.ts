@@ -5,13 +5,17 @@ import { mountMarks } from '../fingerprint/mark';
 import { mountFingerprints } from '../fingerprint/render';
 
 /**
- * Data fingerprints: the large, pointer-driven one in every factor panel and
- * the still marks that stand in for factor icons in the catalog list and the
- * download table (the overview and papers maps mount their own, see
- * mountMarkLayer). The pause button in each panel's toolbar drives the large
- * fingerprints of all panels, as the single switch did in the original.
+ * Data fingerprints: the large, pointer-driven one in the hero and in every
+ * factor panel, and the still marks that stand in for factor icons in the
+ * catalog list and the download table (the overview and papers maps mount
+ * their own, see mountMarkLayer). The pause button in each panel's toolbar
+ * drives all the large fingerprints, as the single switch did in the original.
  */
 export function initFingerprints(): void {
+  // The hero's sits behind the title, so it follows the pointer over the whole
+  // hero; it is always in view on arrival, so it comes to rest after a moment.
+  const hero = $('#top');
+  if (hero && $('canvas[data-factor]', hero)) mountFingerprints(hero, data.factors, { pointerArea: hero, settle: true });
   const root = $('#factors');
   if (root && $('canvas[data-factor]', root)) mountFingerprints(root, data.factors);
   mountMarks(document, data.factors);
