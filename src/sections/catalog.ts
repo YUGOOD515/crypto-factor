@@ -4,8 +4,8 @@ import { $, $$, cssVar, onResize } from '../lib/dom';
 import { data, factor, gridTime, type Factor } from '../lib/data';
 import { formatLike, navValue } from '../lib/format';
 import { reducedMotion } from '../lib/motion';
-import { focusTarget, scrollToTarget } from '../lib/scroll';
 import { initSeg } from '../lib/seg';
+import type { TargetDetail } from '../lib/tabs';
 import { onThemeChange } from '../lib/theme';
 
 /**
@@ -228,29 +228,20 @@ export function initCatalog(): void {
     regroup(seg.value(), false);
   }
 
-  // ── links into the catalog and the methodology
-  for (const link of $$<HTMLAnchorElement>('[data-method-link]')) {
-    link.addEventListener('click', (event) => {
-      event.preventDefault();
-      const code = link.dataset.methodLink ?? '';
-      document.dispatchEvent(new CustomEvent('cf:method', { detail: code }));
-      const block = document.getElementById('m-factors');
-      if (block) scrollToTarget(block, () => focusTarget(document.getElementById(`method-${code}`) ?? block));
-    });
-  }
-  for (const chip of $$<HTMLAnchorElement>('[data-factor-link]')) {
-    chip.addEventListener('click', (event) => {
-      event.preventDefault();
-      openFactor(chip.dataset.factorLink ?? '');
-    });
-  }
-  const openFactor = (code: string) => {
-    select(code);
-    const section = document.getElementById('factors');
+  // ── links into the catalog. Paper chips and the papers map ask for a
+  // factor (src/sections/papers.ts); #panel-SMB or #tab-SMB opens it too.
+  document.addEventListener('cf:factor', (event) => select((event as CustomEvent<string>).detail));
+  document.addEventListener('cf:target', (event) => {
+    const detail = (event as CustomEvent<TargetDetail>).detail;
+    const code = detail.id.match(/^(?:tab|panel)-(.+)$/)?.[1];
     const tab = tabs.find((t) => t.dataset.code === code);
-    if (section) scrollToTarget(section, () => tab?.focus({ preventScroll: true }));
-  };
-  document.addEventListener('cf:factor', (event) => openFactor((event as CustomEvent<string>).detail));
+    if (!code || !tab) return;
+    select(code);
+    // The catalog, not the list: the list sits in a sticky column, so its
+    // position depends on where the page is scrolled.
+    detail.scroll = list.closest('.catalog') ?? list;
+    detail.focus = tab;
+  });
 
   // ── init
   select(selected, { animated: false });

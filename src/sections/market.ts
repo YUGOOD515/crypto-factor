@@ -29,14 +29,19 @@ export function initMarket(): void {
 
 function initCover(): void {
   const svg = $<SVGSVGElement>('.part__shapes');
-  if (!svg || reducedMotion()) return;
-  // Already on screen when this chunk arrives: leave it alone rather than flash.
-  if (svg.getBoundingClientRect().top < window.innerHeight) return;
+  if (!svg) return;
+  // The shapes wait hidden (styles/market.css) until this chunk has set them
+  // up, as the cover is on screen the moment the Market tab opens.
+  const ready = () => svg.classList.add('is-ready');
   const [square, circle, triangle] = Array.from(svg.children) as SVGElement[];
-  if (!square || !circle || !triangle) return;
+  if (reducedMotion() || !square || !circle || !triangle) {
+    ready();
+    return;
+  }
   animeUtils.set(square, { translateX: -140, rotate: -90, opacity: 0 });
   animeUtils.set(circle, { scale: 0 });
   animeUtils.set(triangle, { translateY: -150, opacity: 0 });
+  ready();
   const io = new IntersectionObserver(
     (entries) => {
       if (!entries.some((e) => e.isIntersecting)) return;
@@ -290,7 +295,8 @@ function initPhysics(cats: MarketCategory[], colors: Record<CategoryCode, string
   onResize(
     box,
     debounce((width: number) => {
-      if (!started || Math.abs(width - lastWidth) < 2) return;
+      // Zero while the tab is hidden: not a reason to drop the tokens again.
+      if (!started || width < 10 || Math.abs(width - lastWidth) < 2) return;
       lastWidth = width;
       start();
     }, 250),
@@ -734,6 +740,7 @@ function initActivity(cats: MarketCategory[], colors: Record<CategoryCode, strin
   let size: [number, number] = [0, 0];
   let seen = false;
   onResize(box, (w, h) => {
+    if (w < 10 || h < 10) return; // hidden with its tab
     size = [w, h];
     if (seen) render(w, h);
   });

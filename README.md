@@ -22,6 +22,14 @@ An open library of weekly cryptocurrency factors: eight long-short factor series
 | 05 | Download | All-factors ZIP and single-factor ZIPs (CSV + data dictionary + license + citation), data dictionary, license and citation (text / BibTeX). Only the latest release is offered. |
 | 06 | Market overview | 629 tokens dropped into four category bins, share of tokens vs. market value (bars ↔ ring), active-address index (2018 = 100), category cards and the token → category table (pending). |
 
+### Tabs and links
+
+The page is one document shown one tab at a time: Overview (hero and overview story), Factors, Methodology, Papers, Download and Market. The header links (and the phone menu) switch tabs, mark the current one and set the page title; only the current tab is on screen, and a tab's scripts run the first time it is shown (`onFirstShow` in `src/lib/tabs.ts`). The market code is fetched when the Market link is first pointed at or focused.
+
+- **URLs:** `#factors`, `#methodology`, `#papers`, `#download` and `#market` open a tab at its top; `#overview` scrolls to the story below the hero; `#panel-SMB` (or `#tab-SMB`) opens Factors on SMB and `#method-SMB` opens Methodology on SMB. Any other element id opens its tab and scrolls to it; an unknown hash shows Overview.
+- **History:** every switch is a history entry. Back and forward return to the previous tab at the position the reader left, and a reload keeps the position.
+- **Before JavaScript:** an inline script in `<head>` picks the tab from the hash before the first paint (allowed by hash in the CSP). It also holds a deep link's hash back until the router has scrolled, so the browser does not jump to the element a second time. Without JavaScript the sections show as one long page.
+
 ## Design
 
 The style follows **[capsrock/bauhaus-design-skill](https://github.com/capsrock/bauhaus-design-skill)**: Bauhaus and Swiss International Style, with a strict grid, flat color and geometric shapes that carry meaning. Grid and typography rules come from [peterhadorn/swiss-design-skill](https://github.com/peterhadorn/swiss-design-skill), and diagrams follow [diagram-design](https://github.com/cathrynlavery/diagram-design).
@@ -95,10 +103,10 @@ scripts/
 src/
   main.ts                       entry: fonts, styles, section initializers (market chunk lazy-loaded)
   sections/*.ts                 one module per section
-  lib/*.ts                      data access, DOM helpers, theme, motion and scroll utilities
+  lib/*.ts                      data access, DOM helpers, theme, motion and scroll utilities, tab router (tabs.ts)
   fingerprint/*.ts              data fingerprint: parameter mapping, clock, canvas renderer ported from xjy, still marks
   styles/*.css                  tokens, base, layout, components, sections, fingerprint, market, motion
-index.html                      page skeleton and pre-paint theme script; <!-- partial:* --> markers are filled at build time
+index.html                      page skeleton and pre-paint theme and tab scripts; <!-- partial:* --> markers are filled at build time
 public/                         _headers (CSP, caching), 404.html, robots.txt, favicon
 wrangler.jsonc                  Cloudflare Workers static-assets configuration
 ```
@@ -150,6 +158,7 @@ The site uses static assets only, with no Worker script. `public/_headers` sets 
 ## 中文说明
 
 - **网站结构**：第一部分为因子数据（总览、因子目录与详情、方法论、论文、下载），第二部分为市场总览。仅英文，无需登录，不使用 cookie。
+- **标签页**：页面按标签显示，点击页眉（手机上为菜单）中的 Overview、Factors、Methodology、Papers、Download、Market，只显示对应标签的内容，各标签的脚本在第一次打开时才运行，市场部分的代码在鼠标指向或聚焦 Market 链接时才下载。页眉导航不再显示编号（各区块标题旁的“01 / 06”保留）。每次切换都会记入浏览器历史，后退 / 前进回到之前的标签和滚动位置，刷新后保持位置。链接可直达：`#papers` 等打开对应标签，`#overview` 滚动到首屏下方的总览，`#panel-SMB` 打开因子目录并选中 SMB，`#method-SMB` 打开方法论中的 SMB。`<head>` 中的内联脚本在首次绘制前按网址选好标签；禁用 JavaScript 时所有区块仍按长页面显示。
 - **风格**：采用 bauhaus-design-skill（包豪斯 / 瑞士国际主义风格）。因子部分为纸色、墨黑加一个红色强调色；市场部分在黑底上使用红、蓝、黄三原色，并以几何形状代表四个类别。
 - **深色模式**：默认跟随系统设置；页眉“RELEASE 2026 Q2”旁有浅色 / 深色 / 跟随系统切换（手机上在菜单里），手动选择保存在 `localStorage`（`cf-theme`）。所有颜色都是 `src/styles/tokens.css` 中的语义变量，深色模式只重新定义这些变量，组件不再有单独的深色变体。深色下表面分三层：页面底色、纸色区块与卡片稍亮一级，黑色区块（04 论文、06 市场）始终是最深的一层。图表读取变量并在切换时重绘；`<head>` 中的内联脚本在首次绘制前应用主题，其哈希写在 CSP 中，脚本改动而未更新 `public/_headers` 时构建会报错。
 - **数据指纹**：每个因子都有一枚数字指纹。首屏标题右侧是 MKT 的指纹（取代原来的红色圆形）：页面打开后转动约四秒、逐渐停下，鼠标在首屏任意位置移动时会跟着转动；静止时不再重绘，不占用 CPU，因此首屏不需要暂停按钮。因子详情中为动态大图，可随鼠标转动，工具栏中的暂停按钮可暂停所有大图；其余位置（总览图、因子列表、论文关系图、下载表）原来的图标都换成了静态小指纹，右下角保留小的分类符号（方形 = 交易数据，圆形 = 链上数据；实心 = 风险因子，空心 = 行为因子），图例和标签仍只用符号。小指纹取大图的第一帧，按屏幕尺寸采用类似 mipmap 的两层画法：一层间距约 1.1 px、30% 透明度的密集线条保留形状和平均颜色，上面一层间距约 3 px 的线条保证纹理清晰；线条只计算一次并缓存，重绘时只需描线。系统设置为“减少动态效果”时大图也只绘制一次静止画面。渲染代码移植自 YUGOOD515/xjy 的 `web/fingerprint/render.js`，大图与原版逐点一致；色相 = 数据来源（交易 215 / 链上 32），mood = 年化 Sharpe，roughness = 标准差，activity = |t|，seed = 因子 ID。各项统计量在 8 个因子之间做 min–max 归一化，映射到原版渲染器的取值范围。

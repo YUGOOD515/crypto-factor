@@ -2,6 +2,7 @@ import { animate } from 'motion';
 import { $, $$ } from '../lib/dom';
 import { EASE_OUT, reducedMotion } from '../lib/motion';
 import { initSeg } from '../lib/seg';
+import type { TargetDetail } from '../lib/tabs';
 
 /** 03 Methodology: factor-by-factor construction tabs. */
 export function initMethodology(): void {
@@ -22,16 +23,14 @@ export function initMethodology(): void {
 
   const seg = initSeg(tabs, show);
 
-  document.addEventListener('cf:method', (event) => {
-    const code = (event as CustomEvent<string>).detail;
+  // Links and deep links to #method-SMB open that tab (src/lib/tabs.ts asks
+  // once this tab is on screen) and land on the tab bar above it.
+  document.addEventListener('cf:target', (event) => {
+    const detail = (event as CustomEvent<TargetDetail>).detail;
+    const code = detail.id.match(/^method-(.+)$/)?.[1];
+    if (!code || !panels.some((p) => p.id === detail.id)) return;
     seg.set(code, { silent: true });
     show(code);
+    detail.scroll = $('#m-factors') ?? detail.scroll;
   });
-
-  // Deep link: #method-SMB opens that tab.
-  const fromHash = location.hash.match(/^#method-(.+)$/)?.[1];
-  if (fromHash && panels.some((p) => p.id === `method-${fromHash}`)) {
-    seg.set(fromHash, { silent: true });
-    show(fromHash);
-  }
 }

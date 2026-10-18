@@ -4,6 +4,7 @@ import { data, yearStarts, type Factor } from '../lib/data';
 import { reducedMotion } from '../lib/motion';
 import { mountMarkLayer, type LayerMark } from '../fingerprint/mark';
 import { gsap, ScrollTrigger } from '../lib/scroll';
+import type { TabDetail } from '../lib/tabs';
 
 /**
  * 01 Overview: a sticky factor map that regroups as the reader scrolls.
@@ -339,8 +340,16 @@ export function initOverview(): void {
     const geo = b.geo;
     const frame = frameFor(stepIndex, geo, factors);
     const d = animated && !reducedMotion() ? 0.9 : 0;
+    // Every target gets exactly one tween per step, and that tween replaces
+    // whatever the target was still doing. `overwrite: true` matters: fade-ins
+    // are delayed, and 'auto' only overwrites tweens that are already running,
+    // so a delayed fade-in left over from a step the reader scrolled straight
+    // past would start later and undo this step's fade-out (all four group
+    // labels showing over the lineup).
     const tween = (target: gsap.TweenTarget, vars: gsap.TweenVars) =>
-      d ? gsap.to(target, { duration: d, ease: 'power3.inOut', overwrite: 'auto', ...vars }) : gsap.set(target, vars);
+      d
+        ? gsap.to(target, { duration: d, ease: 'power3.inOut', ...vars, overwrite: true })
+        : gsap.set(target, { ...vars, overwrite: true });
 
     svg.classList.toggle('is-rows', frame.rows);
     factors.forEach((f, i) => {
@@ -429,6 +438,19 @@ export function initOverview(): void {
       if (index !== current) activate(index, true);
     });
   window.addEventListener('resize', debounce(() => scroller.resize(), 200));
+
+  // Back on this tab (src/lib/tabs.ts), the page lands wherever it lands: show
+  // the step at the trigger line at once rather than animate from the last one.
+  document.addEventListener('cf:tab', (event) => {
+    if ((event as CustomEvent<TabDetail>).detail.tab !== 'overview') return;
+    scroller.resize();
+    const line = window.innerHeight * offsetFor(narrowQuery.matches);
+    let index = 0;
+    steps.forEach((step, i) => {
+      if (step.getBoundingClientRect().top < line) index = i;
+    });
+    if (index !== current) activate(index, false);
+  });
 
   narrowQuery.addEventListener('change', () => {
     built = build(svg, narrowQuery.matches ? 'narrow' : 'wide', factors);

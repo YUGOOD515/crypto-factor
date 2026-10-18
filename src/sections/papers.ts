@@ -3,6 +3,7 @@ import { $, $$, onResize } from '../lib/dom';
 import { data, factorByCode } from '../lib/data';
 import { mountMarkLayer, type LayerMark } from '../fingerprint/mark';
 import { focusTarget, scrollToTarget } from '../lib/scroll';
+import { go } from '../lib/tabs';
 
 /**
  * 04 Papers: an orthogonal paper → factor map (D3). Hover or focus on a paper,
@@ -293,13 +294,24 @@ export function initPapers(): void {
     const card = cards.find((c) => c.dataset.paper === id);
     if (card) scrollToTarget(card, () => focusTarget(card));
   };
+  // A factor opens in the Factors tab, selected there and with its tab focused.
   const openFactor = (code: string) => {
-    document.dispatchEvent(new CustomEvent('cf:factor', { detail: code }));
+    go('factors', {
+      prepare: () => document.dispatchEvent(new CustomEvent('cf:factor', { detail: code })),
+      focus: document.getElementById(`tab-${code}`),
+    });
   };
+  for (const chip of chips) {
+    chip.addEventListener('click', (event) => {
+      event.preventDefault();
+      openFactor(chip.dataset.factorLink ?? '');
+    });
+  }
 
   let lastWidth = -1;
   const run = (width: number) => {
-    if (width === lastWidth) return;
+    // Hidden with its tab: keep the last layout for when it comes back.
+    if (width < 10 || width === lastWidth) return;
     lastWidth = width;
     render(width);
   };

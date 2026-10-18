@@ -37,6 +37,14 @@
   transform-origin: 50% 50%;
 }
 
+/* Hidden until src/sections/market.ts has set up their entrance (with tabs
+   only: the long no-script page shows them as they are). */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-tab] .part__shapes:not(.is-ready) {
+    visibility: hidden;
+  }
+}
+
 .mshape--GP { fill: var(--m-gp); }
 .mshape--PL { fill: var(--m-pl); }
 .mshape--PR { fill: var(--m-pr); }

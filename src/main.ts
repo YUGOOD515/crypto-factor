@@ -4,13 +4,12 @@ import 'lenis/dist/lenis.css';
 import './generated/katex.css';
 import './styles/main.css';
 
-import { $, whenNear } from './lib/dom';
-import { initReveal } from './lib/motion';
 import { initSmoothScroll } from './lib/scroll';
+import { initTabs, onFirstShow, onIntent } from './lib/tabs';
 import { initTheme } from './lib/theme';
 import { initCatalog } from './sections/catalog';
 import { initDownload } from './sections/download';
-import { initFingerprints } from './sections/fingerprints';
+import { initCatalogFingerprints, initHeroFingerprint, initMarks } from './sections/fingerprints';
 import { initHeader } from './sections/header';
 import { initHero } from './sections/hero';
 import { initMethodology } from './sections/methodology';
@@ -31,26 +30,40 @@ function safely(name: string, init: () => void): void {
 safely('theme', initTheme);
 safely('smooth scroll', initSmoothScroll);
 safely('header', initHeader);
-safely('hero', initHero);
-safely('overview', initOverview);
-safely('catalog', initCatalog);
-safely('fingerprints', initFingerprints);
-safely('methodology', initMethodology);
-safely('papers', initPapers);
+// Site-wide: download and copy buttons sit in several tabs; the still
+// fingerprint marks only draw once they are on screen.
 safely('download', initDownload);
-safely('reveal', initReveal);
+safely('marks', initMarks);
 
-// Part II (physics, morphing charts) ships as its own chunk and only loads
-// when the reader approaches it.
-const market = $('#market');
-if (market) {
-  whenNear(
-    market,
-    () => {
-      import('./sections/market')
-        .then(({ initMarket }) => safely('market', initMarket))
-        .catch((error) => console.error('[crypto-factor] market chunk failed to load', error));
-    },
-    '600px 0px',
-  );
-}
+// Everything else runs the first time its tab is shown (src/lib/tabs.ts).
+onFirstShow('overview', () => {
+  safely('hero', initHero);
+  safely('hero fingerprint', initHeroFingerprint);
+  safely('overview', initOverview);
+});
+onFirstShow('factors', () => {
+  safely('catalog', initCatalog);
+  safely('catalog fingerprints', initCatalogFingerprints);
+});
+onFirstShow('methodology', () => safely('methodology', initMethodology));
+onFirstShow('papers', () => safely('papers', initPapers));
+
+// Part II (physics, morphing charts) ships as its own chunk: fetched when the
+// reader heads for the Market tab, run when it opens.
+let market: Promise<typeof import('./sections/market')> | null = null;
+const loadMarket = () => {
+  market ??= import('./sections/market');
+  return market;
+};
+onIntent('market', () => {
+  loadMarket().catch(() => {
+    market = null; // try again when the tab opens
+  });
+});
+onFirstShow('market', () => {
+  loadMarket()
+    .then(({ initMarket }) => safely('market', initMarket))
+    .catch((error) => console.error('[crypto-factor] market chunk failed to load', error));
+});
+
+safely('tabs', initTabs);

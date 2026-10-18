@@ -8,6 +8,13 @@
   <meta name="theme-color" content="#ffffff" />
   <!-- Theme before first paint; keep in step with src/lib/theme.ts. CSP allows it by hash (public/_headers). -->
   <script>(function(){var t;try{t=localStorage.getItem('cf-theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;if(t==='dark')document.querySelector('meta[name="theme-color"]').setAttribute('content','#181817')})()</script>
+  <!-- Tab before first paint, from the URL hash; keep in step with src/lib/tabs.ts, which takes over (and
+       sets data-router) once it runs. Until then, or if it never does, the hashchange fallback still switches tabs.
+       Ids map to their tab by prefix (top, panel-SMB, m-factors, cite-bib…); an unknown hash leaves the page whole
+       until tabs.ts resolves it. A deep link's hash is held back (in data-hash) until just after DOMContentLoaded:
+       otherwise the browser scrolls to it once parsing ends, after tabs.ts has, and holds it there until load.
+       CSP allows the script by hash (public/_headers). -->
+  <script>(function(){var d=document.documentElement,T=['overview','factors','methodology','papers','download','market'],M={top:0,hero:0,tab:1,panel:1,m:2,dg:2,mtab:2,method:2,dict:4,license:4,cite:4,mb:5},h=location.hash;function s(){var h='',p,t;try{h=decodeURIComponent(location.hash.slice(1))}catch(e){}p=h.split('-')[0];t=h?T.indexOf(p)>-1?p:T[M[p]]:T[0];if(t)d.dataset.tab=t;else delete d.dataset.tab}s();if(h.length>1)try{history.replaceState(history.state,'',location.pathname+location.search);d.dataset.hash=h;addEventListener('DOMContentLoaded',function(){setTimeout(function(){if(!location.hash)history.replaceState(history.state,'',h);var e=d.dataset.router?null:document.getElementById(h.slice(1));if(e)e.scrollIntoView()})})}catch(e){}addEventListener('hashchange',function(){if(d.dataset.router)return;s();var e=document.getElementById(location.hash.slice(1));if(e)e.scrollIntoView()})})()</script>
   <meta property="og:title" content="Crypto Factor" />
   <meta property="og:description" content="Weekly cryptocurrency factors rebuilt from published research. Documented, cited and free to download." />
   <meta property="og:type" content="website" />
@@ -25,13 +32,13 @@
       </a>
       <nav class="site-nav" aria-label="Primary">
         <ol class="site-nav__list">
-          <li><a href="#overview" data-nav="overview"><span class="site-nav__num">01</span>Overview</a></li>
-          <li><a href="#factors" data-nav="factors"><span class="site-nav__num">02</span>Factors</a></li>
-          <li><a href="#methodology" data-nav="methodology"><span class="site-nav__num">03</span>Methodology</a></li>
-          <li><a href="#papers" data-nav="papers"><span class="site-nav__num">04</span>Papers</a></li>
-          <li><a href="#download" data-nav="download"><span class="site-nav__num">05</span>Download</a></li>
+          <li><a href="#overview" data-nav="overview">Overview</a></li>
+          <li><a href="#factors" data-nav="factors">Factors</a></li>
+          <li><a href="#methodology" data-nav="methodology">Methodology</a></li>
+          <li><a href="#papers" data-nav="papers">Papers</a></li>
+          <li><a href="#download" data-nav="download">Download</a></li>
           <li class="site-nav__sep" aria-hidden="true"></li>
-          <li><a href="#market" data-nav="market"><span class="site-nav__num">06</span>Market</a></li>
+          <li><a href="#market" data-nav="market">Market</a></li>
         </ol>
       </nav>
       <p class="release-tag"><span class="visually-hidden">Current data </span>Release <!--partial:release-label--></p>
@@ -45,15 +52,15 @@
     <nav class="container menu__inner" aria-label="Sections">
       <p class="eyebrow">Factor data</p>
       <ol class="menu__list">
-        <li><a href="#overview"><span>01</span>Overview</a></li>
-        <li><a href="#factors"><span>02</span>Factors</a></li>
-        <li><a href="#methodology"><span>03</span>Methodology</a></li>
-        <li><a href="#papers"><span>04</span>Papers</a></li>
-        <li><a href="#download"><span>05</span>Download</a></li>
+        <li><a href="#overview" data-nav="overview">Overview</a></li>
+        <li><a href="#factors" data-nav="factors">Factors</a></li>
+        <li><a href="#methodology" data-nav="methodology">Methodology</a></li>
+        <li><a href="#papers" data-nav="papers">Papers</a></li>
+        <li><a href="#download" data-nav="download">Download</a></li>
       </ol>
       <p class="eyebrow">Market</p>
-      <ol class="menu__list" start="6">
-        <li><a href="#market"><span>06</span>Market overview</a></li>
+      <ol class="menu__list">
+        <li><a href="#market" data-nav="market">Market overview</a></li>
       </ol>
     </nav>
     <div class="container menu__theme" data-theme-menu>
@@ -64,7 +71,7 @@
 
   <main id="main">
     <!-- ─────────────────────────────── HERO -->
-    <section class="hero" id="top" aria-labelledby="hero-title">
+    <section class="hero" id="top" aria-labelledby="hero-title" data-panel="overview">
       <canvas class="hero__print" data-factor="MKT" aria-hidden="true"></canvas>
       <div class="container hero__grid">
         <p class="eyebrow hero__eyebrow">Weekly cryptocurrency factors · Release <!--partial:release-label--></p>
@@ -72,7 +79,7 @@
         <h1 class="hero__title" id="hero-title"><span class="hero__line"><span>Crypto</span></span><span class="hero__line"><span>Factor</span></span></h1>
         <p class="hero__lede">Eight weekly factors rebuilt from published research: market, size, momentum, value, anchoring and salience. Every series is documented step by step and free to download.</p>
         <div class="hero__ctas">
-          <a class="btn btn--primary btn--lg" href="#factors"><span class="btn__label">Explore the factors</span><span class="btn__icon btn__icon--down" aria-hidden="true"></span></a>
+          <a class="btn btn--primary btn--lg" href="#factors"><span class="btn__label">Explore the factors</span><span class="btn__icon" aria-hidden="true"></span></a>
           <a class="btn btn--ghost btn--lg" href="#download"><span class="btn__label">Download data</span></a>
         </div>
       </div>
@@ -85,7 +92,7 @@
     </section>
 
     <!-- ─────────────────────────────── 01 OVERVIEW -->
-    <section class="section section--paper" id="overview" aria-labelledby="overview-title" data-section="overview">
+    <section class="section section--paper" id="overview" aria-labelledby="overview-title" data-panel="overview">
       <div class="container">
         <header class="section-head">
           <p class="section-index" aria-hidden="true"><span>01</span><span class="section-index__of">/ 06</span></p>
@@ -135,7 +142,7 @@
     </section>
 
     <!-- ─────────────────────────────── 02 FACTORS -->
-    <section class="section" id="factors" aria-labelledby="factors-title" data-section="factors">
+    <section class="section" id="factors" aria-labelledby="factors-title" data-panel="factors">
       <div class="container">
         <header class="section-head">
           <p class="section-index" aria-hidden="true"><span>02</span><span class="section-index__of">/ 06</span></p>
@@ -175,7 +182,7 @@
     </section>
 
     <!-- ─────────────────────────────── 03 METHODOLOGY -->
-    <section class="section section--paper" id="methodology" aria-labelledby="methodology-title" data-section="methodology">
+    <section class="section section--paper" id="methodology" aria-labelledby="methodology-title" data-panel="methodology">
       <div class="container">
         <header class="section-head">
           <p class="section-index" aria-hidden="true"><span>03</span><span class="section-index__of">/ 06</span></p>
@@ -265,7 +272,7 @@
     </section>
 
     <!-- ─────────────────────────────── 04 PAPERS -->
-    <section class="section section--ink" id="papers" aria-labelledby="papers-title" data-section="papers">
+    <section class="section section--ink" id="papers" aria-labelledby="papers-title" data-panel="papers">
       <div class="container">
         <header class="section-head">
           <p class="section-index" aria-hidden="true"><span>04</span><span class="section-index__of">/ 06</span></p>
@@ -282,7 +289,7 @@
     </section>
 
     <!-- ─────────────────────────────── 05 DOWNLOAD -->
-    <section class="section section--paper" id="download" aria-labelledby="download-title" data-section="download">
+    <section class="section section--paper" id="download" aria-labelledby="download-title" data-panel="download">
       <div class="container">
         <header class="section-head">
           <p class="section-index" aria-hidden="true"><span>05</span><span class="section-index__of">/ 06</span></p>
@@ -343,7 +350,7 @@
     </section>
 
     <!-- ─────────────────────────────── 06 MARKET -->
-    <section class="section section--ink section--market" id="market" aria-labelledby="market-title" data-section="market">
+    <section class="section section--ink section--market" id="market" aria-labelledby="market-title" data-panel="market">
       <div class="part">
         <div class="container part__inner">
           <p class="eyebrow">Part II</p>

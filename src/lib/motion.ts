@@ -15,10 +15,10 @@ interface RevealGroup {
   items: HTMLElement[];
 }
 
-function groups(): RevealGroup[] {
+function groups(root: ParentNode): RevealGroup[] {
   const out: RevealGroup[] = [];
   const add = (containerSelector: string, itemSelector?: string) => {
-    for (const container of $$(containerSelector)) {
+    for (const container of $$(containerSelector, root)) {
       const items = itemSelector ? $$(itemSelector, container) : [container];
       if (items.length) out.push({ container, items });
     }
@@ -38,13 +38,14 @@ function groups(): RevealGroup[] {
 }
 
 /**
- * Fade-and-rise entrance for content below the fold. Content that is already
- * on screen when scripts run is left untouched, so nothing flashes.
+ * Fade-and-rise entrance for content below the fold, within `root` (each tab
+ * sets up its own the first time it is shown). Content that is already on
+ * screen at that point is left untouched, so nothing flashes.
  */
-export function initReveal(): void {
+export function initReveal(root: ParentNode = document): void {
   if (reducedMotion()) return;
   const limit = window.innerHeight * 0.92;
-  for (const { container, items } of groups()) {
+  for (const { container, items } of groups(root)) {
     if (container.getBoundingClientRect().top < limit) continue;
     for (const el of items) {
       el.style.opacity = '0';

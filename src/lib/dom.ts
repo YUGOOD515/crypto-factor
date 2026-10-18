@@ -68,20 +68,6 @@ export function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: numb
   };
 }
 
-/** Run once when the element first comes within `margin` of the viewport. */
-export function whenNear(el: Element, callback: () => void, margin = '0px'): void {
-  const io = new IntersectionObserver(
-    (entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) {
-        io.disconnect();
-        callback();
-      }
-    },
-    { rootMargin: margin },
-  );
-  io.observe(el);
-}
-
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }

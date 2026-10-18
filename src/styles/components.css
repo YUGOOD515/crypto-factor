@@ -83,13 +83,6 @@
   transform: scale(1);
 }
 
-.site-nav__num {
-  font-size: var(--t-0);
-  font-weight: 600;
-  color: var(--fg-3);
-  font-variant-numeric: tabular-nums;
-}
-
 .site-nav__sep {
   width: 1px;
   height: 20px;
@@ -228,12 +221,20 @@
   text-decoration: none;
 }
 
-.menu__list a span {
-  min-width: 2.5em;
-  font-size: var(--t-0);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--fg-3);
+/* the current tab, marked as in the header nav */
+.menu__list a::before {
+  content: '';
+  flex: none;
+  align-self: center;
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  transform: scale(0);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.menu__list a[aria-current='page']::before {
+  transform: scale(1);
 }
 
 .menu__list a:hover {
@@ -281,8 +282,7 @@
   transition: transform var(--dur-2) var(--ease-out);
 }
 
-[data-download] .btn__icon,
-.btn__icon--down {
+[data-download] .btn__icon {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='13' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M14 8v11M9 14.5l5 5 5-5' fill='none' stroke='%23000' stroke-width='1.75'/%3E%3C/svg%3E");
 }
 
@@ -299,8 +299,7 @@
 }
 
 .btn:hover .btn__icon { transform: translateX(3px); }
-[data-download]:hover .btn__icon,
-.btn:hover .btn__icon--down { transform: translateY(3px); }
+[data-download]:hover .btn__icon { transform: translateY(3px); }
 .btn:hover .btn__icon--out { transform: translate(2px, -2px); }
 .btn:hover .btn__icon--replay { transform: rotate(-30deg); }
 .btn.is-done .btn__icon { transform: none; }

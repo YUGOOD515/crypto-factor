@@ -356,6 +356,8 @@
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   column-gap: var(--gutter);
   align-items: start;
+  /* #panel-SMB lands here: both columns line up where the sticky side rests. */
+  scroll-margin-top: calc(var(--header-h) + var(--s-5));
 }
 
 .catalog__side {

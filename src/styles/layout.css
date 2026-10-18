@@ -17,6 +17,27 @@
   scroll-margin-top: var(--header-h);
 }
 
+/* ───────────────────────── tabs
+   One tab on screen at a time: :root[data-tab] is set before first paint by
+   the inline script in index.html and kept by src/lib/tabs.ts. The hero and
+   the overview story form the first tab. Without it the page is one long
+   document, as it is without JavaScript. */
+:root[data-tab='overview'] main > [data-panel]:not([data-panel='overview']),
+:root[data-tab='factors'] main > [data-panel]:not([data-panel='factors']),
+:root[data-tab='methodology'] main > [data-panel]:not([data-panel='methodology']),
+:root[data-tab='papers'] main > [data-panel]:not([data-panel='papers']),
+:root[data-tab='download'] main > [data-panel]:not([data-panel='download']),
+:root[data-tab='market'] main > [data-panel]:not([data-panel='market']) {
+  display: none;
+}
+
+/* Every other tab opens with its section head, which needs to clear the fixed
+   header (the hero already makes room for it): about the hero's top gap. */
+:root[data-tab]:not([data-tab='overview']) main > .section[data-panel]:not(.section--market),
+:root[data-tab='market'] .section--market > .part {
+  padding-top: calc(var(--header-h) + var(--section-pad) / 2);
+}
+
 .section--paper {
   background: var(--bg);
 }
