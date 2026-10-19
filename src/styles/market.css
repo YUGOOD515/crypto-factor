@@ -51,7 +51,7 @@
 .mshape--SE { fill: var(--m-se); }
 
 .section--market > .container {
-  padding-top: var(--section-pad);
+  padding-top: var(--s-8);
 }
 
 .proto-notice {

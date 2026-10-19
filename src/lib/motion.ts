@@ -23,7 +23,7 @@ function groups(root: ParentNode): RevealGroup[] {
       if (items.length) out.push({ container, items });
     }
   };
-  add('.section-head', ':scope > .section-index, .eyebrow, .section-title, .section-lede');
+  add('.section-head', '.eyebrow, .section-title, .section-lede');
   add('.hero__facts .facts', '.fact');
   add('.pipeline', '.pipeline__node');
   add('.method-block');
